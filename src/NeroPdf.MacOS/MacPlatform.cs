@@ -15,7 +15,9 @@ internal static class MacPlatform
     {
         var data = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             "Library", "Application Support", "NeroPdf");
-        return new PlatformServices(new MacPaths(data), new NoPrintInbox(), new HeaderInsets(WindowButtonsWidth, 0));
+        // Default app on macOS (LSSetDefaultRoleHandlerForContentType) follows with the Mac build.
+        return new PlatformServices(new MacPaths(data), new NoPrintInbox(), new HeaderInsets(WindowButtonsWidth, 0),
+            new UnsupportedDefaultPdfApp());
     }
 
     private sealed record MacPaths(string DataDirectory) : IPlatformPaths;
@@ -23,5 +25,9 @@ internal static class MacPlatform
     private sealed class NoPrintInbox : IPrintInbox
     {
         public string? TryClaimNext() => null;
+
+        public void CleanUp(TimeSpan maxAge)
+        {
+        }
     }
 }

@@ -32,6 +32,14 @@ __RESOURCES__
       <uap:VisualElements DisplayName="ms-resource:AppName" Description="ms-resource:AppName" BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" />
       <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="pdf">
+            <uap:Logo>Assets\Square44x44Logo.png</uap:Logo>
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="application/pdf">.pdf</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
         <printsupport:Extension Category="windows.printSupportExtension" EntryPoint="NeroPdf.Windows.PrintTasks.PrintSupportExtensionTask" />
         <printsupport2:Extension Category="windows.printSupportVirtualPrinterWorkflow" EntryPoint="NeroPdf.Windows.PrintTasks.VirtualPrinterTask">
           <printsupport2:PrintSupportVirtualPrinter DisplayName="ms-resource:PrinterName" PrinterUri="nero-pdf:printer"

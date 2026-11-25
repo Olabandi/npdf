@@ -14,6 +14,7 @@
         MinHeight="{DynamicResource Layout.MinWindowHeight}"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource ContentBackground}"
+        DragDrop.AllowDrop="True"
         RequestedThemeVariant="Dark"
         ExtendClientAreaToDecorationsHint="True"
         chrome:WindowDrawnDecorations.TitleBarDecorations="MinimizeButton, MaximizeButton, CloseButton"
@@ -22,30 +23,48 @@
   <Window.Resources>
     <StreamGeometry x:Key="MoonIcon">M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z</StreamGeometry>
     <StreamGeometry x:Key="SunIcon">M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10zM11 1h2v3h-2zM11 20h2v3h-2zM1 11h3v2H1zM20 11h3v2h-3zM4.2 5.6l1.4-1.4l2.1 2.1l-1.4 1.4zM16.3 17.7l1.4-1.4l2.1 2.1l-1.4 1.4zM4.2 18.4l2.1-2.1l1.4 1.4l-2.1 2.1zM16.3 6.3l2.1-2.1l1.4 1.4l-2.1 2.1z</StreamGeometry>
+    <StreamGeometry x:Key="OpenIcon">M3 6.5A1.5 1.5 0 0 1 4.5 5h4.6l2 2.5h8.4A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5zM4.8 7v11.2h14.4V9.3h-8.9l-2-2.3z</StreamGeometry>
+    <StreamGeometry x:Key="SaveIcon">M5 3h11l4 4v12.5A1.5 1.5 0 0 1 18.5 21h-13A1.5 1.5 0 0 1 4 19.5v-15A1.5 1.5 0 0 1 5.5 3zM6 5v14h12V7.8L15.2 5H15v4H7V5zm3 0v2h4V5zM8 12h8v7H8z</StreamGeometry>
+    <StreamGeometry x:Key="SaveAsIcon">M5.5 3h10.5l4 4v4h-2V7.8L15.2 5H15v4H7V5H6v14h5v2H5.5A1.5 1.5 0 0 1 4 19.5v-15A1.5 1.5 0 0 1 5.5 3zM9 5v2h4V5zm9.6 8.2l2.2 2.2l-5.8 5.8H12.8V19z</StreamGeometry>
+    <StreamGeometry x:Key="CrownIcon">M3 18h18l1.5-10l-5.5 4.2L12 5l-5 7.2L1.5 8z</StreamGeometry>
+    <StreamGeometry x:Key="SparkleIcon">M10 2l1.8 5.2L17 9l-5.2 1.8L10 16l-1.8-5.2L3 9l5.2-1.8zM18 13l.9 2.1L21 16l-2.1.9L18 19l-.9-2.1L15 16l2.1-.9zM18 2l.7 1.3L20 4l-1.3.7L18 6l-.7-1.3L16 4l1.3-.7z</StreamGeometry>
+    <StreamGeometry x:Key="CollapseIcon">M15.4 5.4L14 4l-8 8l8 8l1.4-1.4L8.8 12z</StreamGeometry>
+    <StreamGeometry x:Key="UpIcon">M11 20V7.8l-5.6 5.6L4 12l8-8l8 8l-1.4 1.4L13 7.8V20z</StreamGeometry>
+    <StreamGeometry x:Key="DownIcon">M13 4v12.2l5.6-5.6L20 12l-8 8l-8-8l1.4-1.4l5.6 5.6V4z</StreamGeometry>
+    <StreamGeometry x:Key="RotateLeftIcon">M7.1 8.5L9.6 11H3V4.4l2.6 2.6A9 9 0 1 1 3.3 15h2.1A7 7 0 1 0 7.1 8.5z</StreamGeometry>
+    <StreamGeometry x:Key="RotateRightIcon">M16.9 8.5L14.4 11H21V4.4l-2.6 2.6A9 9 0 1 0 20.7 15h-2.1A7 7 0 1 1 16.9 8.5z</StreamGeometry>
+    <StreamGeometry x:Key="DeleteIcon">M9 3h6v2h5v2H4V5h5zM6 8h12l-1 13H7zm3 2v9h2v-9zm4 0v9h2v-9z</StreamGeometry>
+    <StreamGeometry x:Key="CheckIcon">M9.5 16.2L5.3 12l-1.4 1.4l5.6 5.6L21 7.5l-1.4-1.4z</StreamGeometry>
+    <StreamGeometry x:Key="ExpandIcon">M8.6 5.4L10 4l8 8l-8 8l-1.4-1.4l6.6-6.6z</StreamGeometry>
   </Window.Resources>
 
   <Grid RowDefinitions="Auto,*">
 
-    <!-- Header: logo and "PDF", file name. The empty area works as the window's title bar. -->
+    <!-- Header: logo and "PDF", file name, Open / Save as / Save. The empty area works as the window's title bar. -->
     <Border Grid.Row="0"
             Height="{DynamicResource Layout.HeaderHeight}"
             Background="{DynamicResource HeaderBackground}"
             Padding="{DynamicResource HeaderPadding}"
             chrome:WindowDecorationProperties.ElementRole="TitleBar">
-      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+      <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
+        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
           <Image Source="avares://NeroPdf.App/Assets/nero-logo-white.png"
                  Height="{DynamicResource Layout.LogoHeight}"
+                 RenderOptions.BitmapInterpolationMode="HighQuality"
                  VerticalAlignment="Top" />
-          <TextBlock Text="{l:Text Header.Product}"
-                     FontWeight="Light"
-                     FontSize="{DynamicResource PdfFontSize}"
-                     LineHeight="{DynamicResource PdfFontSize}"
-                     Margin="{DynamicResource PdfTextMargin}"
-                     Foreground="{DynamicResource HeaderForeground}"
-                     VerticalAlignment="Top" />
+          <!-- "PDF" is centred on the body of the speech bubble, without its tail. -->
+          <Grid Height="{DynamicResource LogoBodyHeight}" VerticalAlignment="Top" Margin="{DynamicResource PdfTextMargin}">
+            <TextBlock Text="{l:Text Header.Product}"
+                       FontWeight="Light"
+                       FontSize="{DynamicResource PdfFontSize}"
+                       Margin="{DynamicResource PdfTextOffset}"
+                       Foreground="{DynamicResource HeaderForeground}"
+                       VerticalAlignment="Center" />
+          </Grid>
         </StackPanel>
-        <Border IsVisible="{Binding HasDocumentName}"
+        <Border Grid.Column="1"
+                HorizontalAlignment="Left"
+                IsVisible="{Binding HasDocumentName}"
                 Margin="{DynamicResource FileNameMargin}"
                 Padding="{DynamicResource FileNamePadding}"
                 Height="{DynamicResource Layout.FileNameDividerHeight}"
@@ -57,16 +76,213 @@
                      TextTrimming="CharacterEllipsis"
                      VerticalAlignment="Center" />
         </Border>
-      </StackPanel>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                    Spacing="{DynamicResource Layout.HeaderButtonSpacing}"
+                    Margin="{DynamicResource HeaderButtonsMargin}"
+                    chrome:WindowDecorationProperties.ElementRole="User">
+          <Button Classes="header" Command="{Binding OpenCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Layout.HeaderButtonIconSpacing}">
+              <PathIcon Data="{StaticResource OpenIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
+              <TextBlock Text="{l:Text Header.Open}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Classes="header" Command="{Binding SaveAsCommand}" IsVisible="{Binding CanSaveAs}">
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Layout.HeaderButtonIconSpacing}">
+              <PathIcon Data="{StaticResource SaveAsIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
+              <TextBlock Text="{l:Text Header.SaveAs}" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Classes="header primary" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}">
+            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Layout.HeaderButtonIconSpacing}">
+              <PathIcon Data="{StaticResource SaveIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
+              <TextBlock Text="{l:Text Header.Save}" VerticalAlignment="Center" FontWeight="SemiBold" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
     </Border>
 
     <!-- Content. The window itself is always "Dark" so the window buttons stay light on the black header;
          the content follows the light or dark theme the user chose. -->
     <ThemeVariantScope x:Name="ContentScope" Grid.Row="1">
-    <Grid Background="{DynamicResource ContentBackground}">
+    <Grid Background="{DynamicResource ContentBackground}" RowDefinitions="*,Auto" ColumnDefinitions="Auto,*">
 
+      <!-- Page overview: thumbnails of all pages, product tiles at the bottom. -->
+      <Border Grid.Row="0" Grid.Column="0"
+              Classes="sidebar"
+              Classes.collapsed="{Binding !IsSidebarExpanded}"
+              Background="{DynamicResource SidebarBackground}"
+              BorderBrush="{DynamicResource SidebarBorder}"
+              BorderThickness="0,0,1,0">
+        <Grid RowDefinitions="Auto,*,Auto">
+          <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="{DynamicResource SidebarHeaderMargin}">
+            <TextBlock IsVisible="{Binding ShowThumbnails}"
+                       Text="{Binding Overview.PageCountText}"
+                       VerticalAlignment="Center"
+                       FontSize="{DynamicResource Layout.SidebarCaptionFontSize}"
+                       Foreground="{DynamicResource MutedForeground}" />
+            <Button Grid.Column="1" Classes="sidebar-toggle"
+                    Command="{Binding ToggleSidebarCommand}"
+                    ToolTip.Tip="{Binding SidebarToggleTooltip}">
+              <Panel>
+                <PathIcon Data="{StaticResource CollapseIcon}" IsVisible="{Binding IsSidebarExpanded}" />
+                <PathIcon Data="{StaticResource ExpandIcon}" IsVisible="{Binding !IsSidebarExpanded}" />
+              </Panel>
+            </Button>
+          </Grid>
+          <!-- Thumbnails. Click: show the page; Ctrl/Shift click or the check box: mark pages;
+               drag: reorder (a gap opens where the pages will land); right click: page menu. -->
+          <ScrollViewer x:Name="ThumbnailScroller" Grid.Row="1" IsVisible="{Binding ShowThumbnails}"
+                        HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+              <ItemsControl x:Name="ThumbnailList" Classes="thumbnails" ItemsSource="{Binding Overview.Pages}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <VirtualizingStackPanel />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Header="{Binding Overview.SelectionText}" IsEnabled="False" />
+                    <Separator />
+                    <MenuItem Header="{l:Text Pages.RotateLeft}" Command="{Binding Overview.RotateLeftCommand}">
+                      <MenuItem.Icon><PathIcon Data="{StaticResource RotateLeftIcon}" /></MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{l:Text Pages.RotateRight}" Command="{Binding Overview.RotateRightCommand}">
+                      <MenuItem.Icon><PathIcon Data="{StaticResource RotateRightIcon}" /></MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="{l:Text Pages.MoveUp}" Command="{Binding Overview.MoveUpCommand}">
+                      <MenuItem.Icon><PathIcon Data="{StaticResource UpIcon}" /></MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{l:Text Pages.MoveDown}" Command="{Binding Overview.MoveDownCommand}">
+                      <MenuItem.Icon><PathIcon Data="{StaticResource DownIcon}" /></MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Classes="danger" Header="{l:Text Pages.Delete}" Command="{Binding Overview.DeleteCommand}"
+                              IsEnabled="{Binding Overview.CanDelete}" InputGesture="Delete">
+                      <MenuItem.Icon><PathIcon Data="{StaticResource DeleteIcon}" /></MenuItem.Icon>
+                    </MenuItem>
+                  </ContextMenu>
+                </ItemsControl.ContextMenu>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="vm:PageViewModel">
+                    <StackPanel Classes="thumb-item" Classes.selected="{Binding IsSelected}" Classes.current="{Binding IsCurrent}"
+                                Classes.dragged="{Binding IsDragged}" Background="Transparent">
+                      <!-- Gap that opens while pages are dragged to this place. -->
+                      <Border Classes="drop-gap" Classes.open="{Binding HasGapBefore}">
+                        <Rectangle Classes="drop-gap-frame" />
+                      </Border>
+                      <Grid HorizontalAlignment="Center" Margin="{DynamicResource ThumbnailItemMargin}">
+                        <StackPanel>
+                          <Border Classes="thumb" Width="{DynamicResource Layout.ThumbnailWidth}" BoxShadow="{DynamicResource PageBoxShadow}">
+                            <Panel>
+                              <c:PdfPageView Page="{Binding}"
+                                             MaxPageWidth="{DynamicResource Layout.ThumbnailWidth}"
+                                             PageBackground="{DynamicResource PageBackground}" />
+                              <Button Classes="thumb-check" ToolTip.Tip="{l:Text Pages.Select}" Click="OnThumbnailCheckClick">
+                                <PathIcon Data="{StaticResource CheckIcon}" />
+                              </Button>
+                            </Panel>
+                          </Border>
+                          <TextBlock Classes="thumb-number" Text="{Binding Number}" HorizontalAlignment="Center"
+                                     FontSize="{DynamicResource Layout.ThumbnailNumberFontSize}" />
+                        </StackPanel>
+                        <!-- Small toolbar next to the last marked page. -->
+                        <Canvas Width="0" Height="0" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Border Classes="thumb-tools" IsVisible="{Binding IsToolbarAnchor}">
+                          <StackPanel>
+                            <Button Classes="thumb-tool" Click="OnToolMoveUp" ToolTip.Tip="{l:Text Pages.MoveUp}"><PathIcon Data="{StaticResource UpIcon}" /></Button>
+                            <Button Classes="thumb-tool" Click="OnToolRotateLeft" ToolTip.Tip="{l:Text Pages.RotateLeft}"><PathIcon Data="{StaticResource RotateLeftIcon}" /></Button>
+                            <Button Classes="thumb-tool" Click="OnToolRotateRight" ToolTip.Tip="{l:Text Pages.RotateRight}"><PathIcon Data="{StaticResource RotateRightIcon}" /></Button>
+                            <Button Classes="thumb-tool" Click="OnToolDelete" ToolTip.Tip="{l:Text Pages.Delete}"><PathIcon Data="{StaticResource DeleteIcon}" /></Button>
+                            <Button Classes="thumb-tool" Click="OnToolMoveDown" ToolTip.Tip="{l:Text Pages.MoveDown}"><PathIcon Data="{StaticResource DownIcon}" /></Button>
+                          </StackPanel>
+                        </Border>
+                        </Canvas>
+                      </Grid>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <!-- Gap after the last page. -->
+              <Border Classes="drop-gap" Classes.open="{Binding Overview.HasGapAtEnd}">
+                <Rectangle Classes="drop-gap-frame" />
+              </Border>
+            </StackPanel>
+          </ScrollViewer>
+          <!-- Pages being dragged: a small stack with the number of pages, following the pointer. -->
+          <Canvas Grid.Row="0" Grid.RowSpan="3" IsHitTestVisible="False">
+            <Border x:Name="DragGhost" IsVisible="False" Classes="drag-ghost" Width="{DynamicResource Layout.ThumbnailWidth}">
+              <Panel>
+                <c:PdfPageView x:Name="DragGhostPage" MaxPageWidth="{DynamicResource Layout.ThumbnailWidth}" PageBackground="{DynamicResource PageBackground}" />
+                <Border Classes="drag-count">
+                  <TextBlock x:Name="DragGhostCount" />
+                </Border>
+              </Panel>
+            </Border>
+          </Canvas>
+          <StackPanel Grid.Row="2" Margin="{DynamicResource SidebarPadding}" Spacing="{DynamicResource Layout.TileSpacing}">
+            <Button Classes="tile" Command="{Binding PromoLinks.OpenNeroAiCommand, FallbackValue={x:Null}}" ToolTip.Tip="{l:Text Promo.NeroAi.Title}">
+              <Grid ColumnDefinitions="Auto,*">
+                <Border Width="{DynamicResource Layout.TileIconSize}" Height="{DynamicResource Layout.TileIconSize}" CornerRadius="{DynamicResource TileCornerRadius}">
+                  <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                      <GradientStop Offset="0" Color="{DynamicResource PromoAiStartColor}" />
+                      <GradientStop Offset="1" Color="{DynamicResource PromoAiEndColor}" />
+                    </LinearGradientBrush>
+                  </Border.Background>
+                  <PathIcon Data="{StaticResource SparkleIcon}" Foreground="{DynamicResource TileIconForeground}" Width="{DynamicResource Layout.ModeIconSize}" Height="{DynamicResource Layout.ModeIconSize}" />
+                </Border>
+                <StackPanel Grid.Column="1" Classes="tile-text" IsVisible="{Binding IsSidebarExpanded}">
+                  <TextBlock Text="{l:Text Promo.NeroAi.Title}" FontWeight="SemiBold" FontSize="{DynamicResource Layout.TileTitleFontSize}" Foreground="{DynamicResource Foreground}" />
+                  <TextBlock Text="{l:Text Promo.NeroAi.Text}" FontSize="{DynamicResource Layout.TileTextFontSize}" Foreground="{DynamicResource MutedForeground}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+              </Grid>
+            </Button>
+            <Button Classes="tile" Command="{Binding PromoLinks.OpenNeroPlatinumCommand, FallbackValue={x:Null}}" ToolTip.Tip="{l:Text Promo.Platinum.Title}">
+              <Grid ColumnDefinitions="Auto,*">
+                <Border Width="{DynamicResource Layout.TileIconSize}" Height="{DynamicResource Layout.TileIconSize}" CornerRadius="{DynamicResource TileCornerRadius}">
+                  <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                      <GradientStop Offset="0" Color="{DynamicResource PromoPlatinumStartColor}" />
+                      <GradientStop Offset="1" Color="{DynamicResource PromoPlatinumEndColor}" />
+                    </LinearGradientBrush>
+                  </Border.Background>
+                  <PathIcon Data="{StaticResource CrownIcon}" Foreground="{DynamicResource TileIconForeground}" Width="{DynamicResource Layout.ModeIconSize}" Height="{DynamicResource Layout.ModeIconSize}" />
+                </Border>
+                <StackPanel Grid.Column="1" Classes="tile-text" IsVisible="{Binding IsSidebarExpanded}">
+                  <TextBlock Text="{l:Text Promo.Platinum.Title}" FontWeight="SemiBold" FontSize="{DynamicResource Layout.TileTitleFontSize}" Foreground="{DynamicResource Foreground}" />
+                  <TextBlock Text="{l:Text Promo.Platinum.Text}" FontSize="{DynamicResource Layout.TileTextFontSize}" Foreground="{DynamicResource MutedForeground}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+              </Grid>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+
+      <!-- Hint: make Nero PDF the default app for PDF files. -->
+      <Border Grid.Row="1" Grid.ColumnSpan="2"
+              IsVisible="{Binding DefaultAppHint.IsVisible, FallbackValue=False}"
+              Background="{DynamicResource HintBackground}"
+              BorderBrush="{DynamicResource HintBorder}"
+              BorderThickness="0,1,0,0"
+              Padding="{DynamicResource HintPadding}">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Text="{l:Text DefaultApp.Question}" Foreground="{DynamicResource Foreground}"
+                     TextWrapping="Wrap" VerticalAlignment="Center" />
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="{DynamicResource Layout.DialogButtonSpacing}"
+                      Margin="{DynamicResource HintButtonsMargin}">
+            <Button Classes="dialog-primary" Content="{l:Text DefaultApp.Set}" Command="{Binding DefaultAppHint.SetDefaultCommand}" />
+            <Button Content="{l:Text DefaultApp.Ignore}" Command="{Binding DefaultAppHint.IgnoreCommand}" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <Grid Grid.Row="0" Grid.Column="1">
       <ScrollViewer x:Name="PageScroller" IsVisible="{Binding HasPages}" HorizontalScrollBarVisibility="Disabled">
-        <ItemsControl x:Name="PageList" ItemsSource="{Binding Pages}" Margin="{DynamicResource PageListMargin}">
+        <ItemsControl x:Name="PageList" ItemsSource="{Binding Overview.Pages}" Margin="{DynamicResource PageListMargin}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
               <VirtualizingStackPanel />
@@ -110,7 +326,7 @@
               Margin="{DynamicResource PillMargin}"
               Background="{DynamicResource PillBackground}"
               CornerRadius="{DynamicResource PillCornerRadius}" Padding="{DynamicResource PillPadding}">
-        <TextBlock Text="{Binding PageIndicator}"
+        <TextBlock Text="{Binding Overview.PageIndicator}"
                    FontSize="{DynamicResource Layout.PillFontSize}"
                    Foreground="{DynamicResource PillForeground}" />
       </Border>
@@ -133,6 +349,7 @@
           <PathIcon Data="{StaticResource SunIcon}" Width="{DynamicResource Layout.ModeIconSize}" Height="{DynamicResource Layout.ModeIconSize}" IsVisible="{Binding IsDark}" />
         </Panel>
       </Button>
+      </Grid>
     </Grid>
     </ThemeVariantScope>
   </Grid>

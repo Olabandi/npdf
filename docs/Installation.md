@@ -2,7 +2,7 @@
 
 Diese Anleitung beschreibt, wie man den aktuellen Entwicklungsstand von Nero PDF auf einem anderen Windows-Rechner installiert, nutzt und wieder entfernt. Am Ende steht, wie man das Installationspaket selbst baut.
 
-Stand: Entwicklungsschritt 1. Nero PDF ist ein reiner Viewer mit virtuellem Drucker. Öffnen-Dialog, Drag and Drop und Speichern kommen mit Schritt 2.
+Stand: Entwicklungsschritt 4. Nero PDF zeigt PDFs an, ist virtueller Drucker, kann öffnen und speichern, hat eine Seitenübersicht und bearbeitet Seiten. Danach folgt die Auslieferung (Mac-Version, Pipeline, Store).
 
 ## Voraussetzungen
 
@@ -20,7 +20,7 @@ Stand: Entwicklungsschritt 1. Nero PDF ist ein reiner Viewer mit virtuellem Druc
 Alternativ in PowerShell:
 
 ```powershell
-Add-AppxPackage -Path .\NeroPdf_0.1.2.0_x64.msix
+Add-AppxPackage -Path .\NeroPdf_0.4.0.0_x64.msix
 ```
 
 Ist bereits eine ältere Version installiert, wird sie aktualisiert.
@@ -28,7 +28,14 @@ Ist bereits eine ältere Version installiert, wird sie aktualisiert.
 ## Benutzen
 
 - **Drucken:** In einem beliebigen Programm (Word, Browser, Editor …) drucken und den Drucker **„Nero PDF“** wählen. Nach etwa einer Sekunde öffnet sich Nero PDF mit dem Ergebnis. Frisch gedruckte Dokumente zeigen oben keinen Dateinamen.
-- **Datei ansehen:** In Schritt 1 nur über die Kommandozeile, z. B. `NeroPdf.exe "C:\Pfad\Datei.pdf"`. Nero PDF erscheint außerdem im Startmenü und startet dort ohne Dokument.
+- **Ausdruck speichern:** Auf **Speichern** klicken (Strg+S) und einen Ort wählen. Als Name wird der Dokumentname aus dem Druckauftrag vorgeschlagen. Der Ausdruck wird dabei verschoben, nicht kopiert. Wer ein Fenster mit einem ungespeicherten Ausdruck schließt, wird gefragt, ob gespeichert werden soll.
+- **Datei öffnen:** Auf **Öffnen** klicken (Strg+O) oder eine PDF-Datei ins Fenster ziehen. Nero PDF erscheint außerdem im Startmenü.
+- **Speichern unter:** Bei geöffneten Dateien legt **Speichern unter …** (Strg+Umschalt+S) eine Kopie an einem neuen Ort ab. Das Original bleibt erhalten. Speichern unter dem gleichen Namen am gleichen Ort funktioniert ebenfalls.
+- **Passwortgeschützte PDFs:** Beim Öffnen erscheint ein Passwortdialog. Das Passwort wird nirgends gespeichert.
+- **Nie gespeicherte Ausdrucke** werden nach 7 Tagen automatisch gelöscht.
+- **Seitenübersicht und Blättern:** Links stehen Miniaturen aller Seiten, ein Klick springt zur Seite. Mit Bild auf/ab geht es seitenweise, mit Pos1/Ende zur ersten oder letzten Seite.
+- **Seiten bearbeiten:** In der Seitenübersicht Seiten markieren (Klick, Strg+Klick, Umschalt+Klick oder das Auswahlfeld oben rechts an der Miniatur). Die kleine Werkzeugleiste neben der Markierung und das Rechtsklick-Menü drehen, verschieben und löschen. Entf löscht die markierten Seiten. Zum Umsortieren die Seiten mit der Maus an eine andere Stelle ziehen, dort öffnet sich eine Lücke. Alle Änderungen betreffen zunächst nur das geöffnete Dokument. Die Datei ändert sich erst beim Speichern.
+- **Seitenübersicht einklappen:** Der Pfeil oben in der Leiste klappt die Übersicht ein und aus. Die Produktkacheln bleiben dabei als Icons sichtbar.
 - **Hell und dunkel:** Das Symbol unten rechts schaltet um. Die Wahl wird gespeichert.
 - **Mehrere Drucke gleichzeitig** öffnen jeweils ein eigenes Fenster.
 
@@ -64,3 +71,7 @@ Voraussetzungen: .NET 10 SDK, Windows SDK (für `makeappx`, `makepri`, `signtool
 ```
 
 Das Paket liegt danach unter `artifacts\package\`. Mit `-Install` wird es gleich auf dem eigenen Rechner installiert. Die Versionsnummer muss bei jeder neuen Auslieferung steigen.
+
+## Lizenzen
+
+Nero PDF bringt die Lizenztexte, Copyright- und NOTICE-Dateien aller mitgelieferten Fremdkomponenten (PDFium und seine Bibliotheken, Avalonia, SkiaSharp, HarfBuzz und weitere) im Installationsordner unter `Licenses` mit. Die Übersicht steht in `Licenses\THIRD-PARTY-NOTICES.txt`, dort sind auch Änderungen an übernommenen Dateien vermerkt. Wird ein Paket aktualisiert, sammelt `build\update-licenses.ps1` die Texte neu ein. Ein Test prüft, dass die PDFium-Lizenzen zur verwendeten Version passen.

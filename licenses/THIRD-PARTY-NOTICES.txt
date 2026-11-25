@@ -1,0 +1,94 @@
+Nero PDF - Third-party notices
+=============================
+
+Nero PDF contains the third-party components listed below. Each component is used under the
+licence named here. The full licence texts, copyright notices and NOTICE files are in the
+sub folders of this "Licenses" folder, unchanged from the original source.
+
+This file is updated together with the components (build/update-licenses.ps1 collects the texts;
+a test checks that the PDFium licence folder matches the PDFium version in use).
+
+
+Components
+----------
+
+PDFium (PDF engine), binary build 160.0.8179 (chromium/8179)
+  Licence:    BSD 3-Clause and Apache License 2.0 (PDFium), MIT (binary build)
+  Copyright:  Copyright 2014 The PDFium Authors; binary build: Copyright 2014-2025 Benoit Blanchon
+  Source:     https://pdfium.googlesource.com/pdfium/ , https://github.com/bblanchon/pdfium-binaries
+  Includes:   abseil, agg23, dragonbox, fast_float, FreeType, HarfBuzz, Highway, ICU, Little CMS,
+              libjpeg-turbo, libopenjpeg, libpng, llvm-libc, simdutf, zlib
+  Texts:      pdfium\  (pdfium.txt, LICENSE.txt and one file per included library)
+
+Avalonia UI 12.2 (user interface framework)
+  Licence:    MIT
+  Copyright:  Copyright (c) AvaloniaUI OÜ
+  Source:     https://github.com/AvaloniaUI/Avalonia
+  Texts:      avalonia\LICENSE.txt
+
+ANGLE (graphics layer used by Avalonia on Windows)
+  Licence:    BSD 3-Clause
+  Copyright:  Copyright 2018 The ANGLE Project Authors
+  Source:     https://chromium.googlesource.com/angle/angle
+  Texts:      angle\
+
+SkiaSharp 3.119 with Skia (2D graphics)
+  Licence:    MIT (SkiaSharp), BSD 3-Clause (Skia) and others listed in the notices file
+  Copyright:  Copyright (c) Microsoft Corporation; Skia: Copyright Google Inc.
+  Source:     https://github.com/mono/SkiaSharp
+  Texts:      skiasharp\  (including THIRD-PARTY-NOTICES)
+
+HarfBuzzSharp 8.3 with HarfBuzz (text shaping)
+  Licence:    MIT (HarfBuzzSharp), "Old MIT" (HarfBuzz) and others listed in the notices file
+  Copyright:  Copyright (c) Microsoft Corporation; HarfBuzz: see notices file
+  Source:     https://github.com/mono/SkiaSharp
+  Texts:      harfbuzzsharp\  (including THIRD-PARTY-NOTICES)
+
+MicroCom.Runtime (COM interop used by Avalonia)
+  Licence:    MIT
+  Copyright:  Copyright (c) 2021 Nikita Tsukanov
+  Source:     https://github.com/kekekeks/MicroCom
+  Texts:      microcom\LICENSE.txt
+
+Tmds.DBus.Protocol (part of Avalonia; used on Linux only)
+  Licence:    MIT
+  Copyright:  Copyright 2006 Alp Toker, 2010 Other Contributors, 2016 Tom Deseyn
+  Source:     https://github.com/tmds/Tmds.DBus
+  Texts:      tmds-dbus\LICENSE.txt
+
+C#/WinRT (Windows Runtime projection and component hosting)
+  Licence:    MIT
+  Copyright:  Copyright (c) Microsoft Corporation
+  Source:     https://github.com/microsoft/CsWinRT
+  Texts:      cswinrt\  (LICENSE and NOTICE)
+
+Microsoft.Extensions.Logging and dependencies
+  Licence:    MIT
+  Copyright:  Copyright (c) .NET Foundation and Contributors
+  Source:     https://github.com/dotnet/runtime
+  Texts:      microsoft-extensions\  (THIRD-PARTY-NOTICES)
+
+Printer capabilities file (Config\Printer.pdc)
+  Licence:    Apache License 2.0
+  Copyright:  Copyright (c) 2010 CubeSoft, Inc.
+  Source:     https://github.com/cube-soft/cube.psa.samples (Samples/DesktopBridge/Packaging/Assets/Printer.pdc)
+  Texts:      cube-psa-samples\LICENSE.txt
+
+
+Modifications
+-------------
+
+Config\Printer.pdc (from cube-soft/cube.psa.samples), modified by Nero AG in 2026:
+  - Paper size ISO A4 marked as the default option.
+  - Paper size US Letter added.
+  The changes are also noted at the top of the file itself.
+
+All other components are used as published, without changes.
+
+
+NOTICE files
+------------
+
+Where a component contains a NOTICE or THIRD-PARTY-NOTICES file, it is included unchanged in the
+component's folder (C#/WinRT, SkiaSharp, HarfBuzzSharp, Microsoft.Extensions). PDFium and the other
+components do not contain a NOTICE file.

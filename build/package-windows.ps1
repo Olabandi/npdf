@@ -64,7 +64,12 @@ Get-ChildItem $tasksOut -File | Where-Object { -not (Test-Path (Join-Path $layou
 
 Write-Host "Adding manifest, logos and printer capabilities ..."
 Copy-Item (Join-Path $root "packaging\windows\Assets") $layout -Recurse -Force
+# The logos come in several sizes and variants (targetsize, scale, unplated); they are indexed in
+# resources.pri so Windows picks the right one and draws no coloured plate behind the icon.
+Copy-Item (Join-Path $root "packaging\windows\Assets") $resources -Recurse -Force
 Copy-Item (Join-Path $root "packaging\windows\Config") $layout -Recurse -Force
+# Licence texts, copyright and NOTICE files of all third-party components (see licenses/THIRD-PARTY-NOTICES.txt).
+Copy-Item (Join-Path $root "licenses") (Join-Path $layout "Licenses") -Recurse -Force
 
 # Package resources (app and printer name) from the language files, one .resw per language.
 $languages = Get-ChildItem (Join-Path $root "src\NeroPdf.App\Languages") -Filter *.json | Sort-Object Name

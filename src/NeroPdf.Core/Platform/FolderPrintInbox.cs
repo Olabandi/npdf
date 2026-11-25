@@ -4,21 +4,24 @@ namespace NeroPdf.Core.Platform;
 /// Print inbox in a folder: the print task writes "*.part" files into Incoming and renames them to
 /// "*.pdf" when they are complete. Claiming moves a file to Opened; the move succeeds for exactly
 /// one Nero PDF instance, so parallel print jobs never end up in the same window.
+/// Saving a printed document moves it out of these folders, so whatever stays here was never saved.
 /// </summary>
 public sealed class FolderPrintInbox(string tempDirectory) : IPrintInbox
 {
+    private string Incoming => Path.Combine(tempDirectory, PrintFolders.Incoming);
+
+    private string Opened => Path.Combine(tempDirectory, PrintFolders.Opened);
+
     public string? TryClaimNext()
     {
-        var incoming = Path.Combine(tempDirectory, PrintFolders.Incoming);
-        if (!Directory.Exists(incoming))
+        if (!Directory.Exists(Incoming))
         {
             return null;
         }
-        var opened = Path.Combine(tempDirectory, PrintFolders.Opened);
-        Directory.CreateDirectory(opened);
-        foreach (var file in new DirectoryInfo(incoming).GetFiles("*.pdf").OrderBy(f => f.CreationTimeUtc))
+        Directory.CreateDirectory(Opened);
+        foreach (var file in new DirectoryInfo(Incoming).GetFiles("*.pdf").OrderBy(f => f.CreationTimeUtc))
         {
-            var target = Path.Combine(opened, file.Name);
+            var target = Path.Combine(Opened, file.Name);
             try
             {
                 File.Move(file.FullName, target);
@@ -33,5 +36,34 @@ public sealed class FolderPrintInbox(string tempDirectory) : IPrintInbox
             }
         }
         return null;
+    }
+
+    public void CleanUp(TimeSpan maxAge)
+    {
+        var limit = DateTime.UtcNow - maxAge;
+        foreach (var folder in new[] { Incoming, Opened })
+        {
+            if (!Directory.Exists(folder))
+            {
+                continue;
+            }
+            foreach (var file in new DirectoryInfo(folder).GetFiles())
+            {
+                if (file.LastWriteTimeUtc >= limit)
+                {
+                    continue;
+                }
+                try
+                {
+                    file.Delete();
+                }
+                catch (IOException)
+                {
+                }
+                catch (UnauthorizedAccessException)
+                {
+                }
+            }
+        }
     }
 }

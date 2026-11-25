@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
 
 namespace NeroPdf.Core.Settings;
@@ -8,6 +9,12 @@ public sealed class AppSettings
 {
     /// <summary>"Light" or "Dark".</summary>
     public string Theme { get; set; } = "Light";
+
+    /// <summary>Printed documents that were never saved are removed after this many days.</summary>
+    public int UnsavedPrintRetentionDays { get; set; }
+
+    /// <summary>The page overview on the left is collapsed.</summary>
+    public bool SidebarCollapsed { get; set; }
 }
 
 /// <summary>Loads the defaults, overlays the user's settings file and saves changes.</summary>
@@ -17,12 +24,15 @@ public sealed class SettingsStore(string defaultsPath, string userPath, ILogger<
 
     public AppSettings Load()
     {
-        var settings = ReadFile(defaultsPath) ?? new AppSettings();
-        var user = ReadFile(userPath);
-        if (user is not null)
+        var merged = ReadObject(defaultsPath) ?? new JsonObject();
+        if (ReadObject(userPath) is { } user)
         {
-            settings = user;
+            foreach (var (key, value) in user)
+            {
+                merged[key] = value?.DeepClone();
+            }
         }
+        var settings = merged.Deserialize<AppSettings>() ?? new AppSettings();
         logger.LogDebug("Settings loaded, theme {Theme}", settings.Theme);
         return settings;
     }
@@ -43,7 +53,7 @@ public sealed class SettingsStore(string defaultsPath, string userPath, ILogger<
         }
     }
 
-    private AppSettings? ReadFile(string path)
+    private JsonObject? ReadObject(string path)
     {
         if (!File.Exists(path))
         {
@@ -51,7 +61,7 @@ public sealed class SettingsStore(string defaultsPath, string userPath, ILogger<
         }
         try
         {
-            return JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(path));
+            return JsonNode.Parse(File.ReadAllText(path)) as JsonObject;
         }
         catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
         {

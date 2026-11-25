@@ -1,9 +1,10 @@
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
+using NeroPdf.App.Dialogs;
 using NeroPdf.App.Infrastructure;
+using NeroPdf.Core.Documents;
 using NeroPdf.Core.Pdf;
 
 namespace NeroPdf.App.ViewModels;
@@ -16,38 +17,92 @@ public enum ViewState
     Error,
 }
 
-/// <summary>State of the main window: the open document, its pages and the theme switch.</summary>
+/// <summary>
+/// State of the main window: opening, closing and saving the document, the theme and the page
+/// overview panel. The pages themselves are handled by <see cref="PageOverviewViewModel"/>.
+/// </summary>
 public sealed class MainViewModel : ObservableObject, IDisposable
 {
     private readonly IPdfEngine _engine;
+    private readonly DocumentSaver _saver;
     private readonly Action<bool> _applyDarkTheme;
     private readonly TimeSpan _progressDelay;
     private readonly ILogger<MainViewModel> _logger;
 
     private IPdfDocument? _document;
+    private string? _sourcePath;
+    private bool _isPrinted;
+    private bool _hasChanges;
+    private bool _busy;
     private ViewState _state = ViewState.Empty;
     private string? _documentName;
     private string _errorMessage = string.Empty;
-    private int _currentPage = 1;
     private bool _isDark;
+    private bool _isSidebarExpanded = true;
 
-    public MainViewModel(IPdfEngine engine, bool isDark, Action<bool> applyDarkTheme, TimeSpan progressDelay,
-        ILogger<MainViewModel> logger)
+    public MainViewModel(IPdfEngine engine, DocumentSaver saver, PageOverviewViewModel overview, bool isDark,
+        Action<bool> applyDarkTheme, TimeSpan progressDelay, ILogger<MainViewModel> logger)
     {
         _engine = engine;
+        _saver = saver;
+        Overview = overview;
         _isDark = isDark;
         _applyDarkTheme = applyDarkTheme;
         _progressDelay = progressDelay;
         _logger = logger;
+        Overview.DocumentChanged += (_, _) =>
+        {
+            _hasChanges = true;
+            OnDocumentStateChanged();
+        };
         ToggleThemeCommand = new RelayCommand(ToggleTheme);
+        ToggleSidebarCommand = new RelayCommand(() => IsSidebarExpanded = !IsSidebarExpanded);
+        OpenCommand = new RelayCommand(() => Run(OpenWithDialogAsync));
+        SaveCommand = new RelayCommand(() => Run(async () => await SaveAsync()));
+        SaveAsCommand = new RelayCommand(() => Run(SaveAsAsync));
     }
 
     /// <summary>Raised once when the first page of a document has been drawn (start time measurement).</summary>
     public event EventHandler? FirstPageShown;
 
-    public ObservableCollection<PageViewModel> Pages { get; } = [];
+    public PageOverviewViewModel Overview { get; }
+
+    /// <summary>Tiles linking to other Nero products.</summary>
+    public PromoLinksViewModel? PromoLinks { get; set; }
+
+    /// <summary>The hint to make Nero PDF the default PDF app.</summary>
+    public DefaultAppHintViewModel? DefaultAppHint { get; set; }
+
+    /// <summary>Set by the window; used for file pickers and questions.</summary>
+    public IDialogs? Dialogs { get; set; }
 
     public ICommand ToggleThemeCommand { get; }
+
+    public ICommand ToggleSidebarCommand { get; }
+
+    public ICommand OpenCommand { get; }
+
+    public ICommand SaveCommand { get; }
+
+    public ICommand SaveAsCommand { get; }
+
+    /// <summary>The page overview is expanded; when collapsed only the product tiles remain as icons.</summary>
+    public bool IsSidebarExpanded
+    {
+        get => _isSidebarExpanded;
+        set
+        {
+            if (Set(ref _isSidebarExpanded, value))
+            {
+                OnPropertyChanged(nameof(ShowThumbnails));
+                OnPropertyChanged(nameof(SidebarToggleTooltip));
+            }
+        }
+    }
+
+    public bool ShowThumbnails => HasPages && IsSidebarExpanded;
+
+    public string SidebarToggleTooltip => Texts.Get(IsSidebarExpanded ? "Sidebar.Collapse" : "Sidebar.Expand");
 
     public ViewState State
     {
@@ -60,6 +115,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
                 OnPropertyChanged(nameof(IsLoading));
                 OnPropertyChanged(nameof(HasPages));
                 OnPropertyChanged(nameof(IsError));
+                OnPropertyChanged(nameof(ShowThumbnails));
+                OnDocumentStateChanged();
             }
         }
     }
@@ -71,6 +128,14 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public bool HasPages => State == ViewState.Showing;
 
     public bool IsError => State == ViewState.Error;
+
+    /// <summary>A printed document that was never saved, or an opened file with page changes.</summary>
+    public bool HasUnsavedChanges => HasPages && (_isPrinted || _hasChanges);
+
+    public bool CanSave => HasUnsavedChanges;
+
+    /// <summary>"Save as" is offered for opened files.</summary>
+    public bool CanSaveAs => HasPages && !_isPrinted;
 
     /// <summary>File name shown in the header; only for opened files, not for printed documents.</summary>
     public string? DocumentName
@@ -93,20 +158,6 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         private set => Set(ref _errorMessage, value);
     }
 
-    public int CurrentPage
-    {
-        get => _currentPage;
-        set
-        {
-            if (Set(ref _currentPage, value))
-            {
-                OnPropertyChanged(nameof(PageIndicator));
-            }
-        }
-    }
-
-    public string PageIndicator => Texts.Format("Viewer.PageIndicator", CurrentPage, Pages.Count);
-
     public bool IsDark
     {
         get => _isDark;
@@ -121,45 +172,82 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     public string ThemeToggleTooltip => Texts.Get(IsDark ? "Theme.SwitchToLight" : "Theme.SwitchToDark");
 
-    /// <summary>Opens a document in the background. The progress display only appears for longer loads.</summary>
-    public async Task OpenAsync(string path, bool showFileName)
+    /// <summary>Opens a file chosen by the user (dialog or drag and drop) after confirming unsaved changes.</summary>
+    public async Task OpenFileAsync(string path)
     {
-        _logger.LogInformation("Opening document (from {Source})", showFileName ? "file" : "printer");
+        if (await ConfirmCloseAsync())
+        {
+            await OpenAsync(path, printed: false);
+        }
+    }
+
+    /// <summary>
+    /// Opens a document in the background; asks for a password if needed. The progress display only
+    /// appears for longer loads.
+    /// </summary>
+    public async Task OpenAsync(string path, bool printed)
+    {
+        _logger.LogInformation("Opening document (from {Source})", printed ? "printer" : "file");
         var watch = Stopwatch.StartNew();
         CloseDocument();
-        DocumentName = showFileName ? Path.GetFileName(path) : null;
+        var fileName = Path.GetFileName(path);
 
-        var opening = Task.Run(() =>
+        string? password = null;
+        while (true)
         {
-            var result = _engine.Open(path);
-            var sizes = result.Document is { } doc
-                ? Enumerable.Range(0, doc.PageCount).Select(doc.GetPageSize).ToArray()
-                : [];
-            return (result, sizes);
-        });
-        if (await Task.WhenAny(opening, Task.Delay(_progressDelay)) != opening)
-        {
-            State = ViewState.Loading;
-        }
+            var result = await OpenInBackgroundAsync(path, password);
+            if (result.Status is PdfOpenStatus.PasswordRequired or PdfOpenStatus.WrongPassword && Dialogs is not null)
+            {
+                State = ViewState.Empty;
+                password = await Dialogs.AskPasswordAsync(fileName, result.Status == PdfOpenStatus.WrongPassword);
+                if (password is not null)
+                {
+                    continue;
+                }
+                _logger.LogInformation("Password entry cancelled");
+            }
+            password = null;
 
-        var (result, sizes) = await opening;
-        if (result.Status != PdfOpenStatus.Ok || result.Document is null)
-        {
-            ErrorMessage = Texts.Format(ErrorTextId(result.Status), Path.GetFileName(path));
-            State = ViewState.Error;
-            _logger.LogInformation("Document not shown: {Status}", result.Status);
+            if (result.Status != PdfOpenStatus.Ok || result.Document is null)
+            {
+                ErrorMessage = Texts.Format(ErrorTextId(result.Status), fileName);
+                DocumentName = printed ? null : fileName;
+                State = ViewState.Error;
+                _logger.LogInformation("Document not shown: {Status}", result.Status);
+                return;
+            }
+
+            _document = result.Document;
+            _sourcePath = path;
+            _isPrinted = printed;
+            _hasChanges = false;
+            DocumentName = printed ? null : fileName;
+            Overview.Load(_document);
+            State = ViewState.Showing;
+            _logger.LogInformation("Document ready: {Pages} pages in {Ms} ms", Overview.Pages.Count, watch.ElapsedMilliseconds);
             return;
         }
+    }
 
-        _document = result.Document;
-        for (var i = 0; i < sizes.Length; i++)
+    /// <summary>
+    /// Asks what to do with an unsaved printout or unsaved changes before the document is closed or
+    /// replaced. Returns false if the user wants to keep it open.
+    /// </summary>
+    public async Task<bool> ConfirmCloseAsync()
+    {
+        if (!HasUnsavedChanges || Dialogs is null)
         {
-            Pages.Add(new PageViewModel(_document, i, sizes[i]));
+            return true;
         }
-        CurrentPage = 1;
-        OnPropertyChanged(nameof(PageIndicator));
-        State = ViewState.Showing;
-        _logger.LogInformation("Document ready: {Pages} pages in {Ms} ms", Pages.Count, watch.ElapsedMilliseconds);
+        var choice = _isPrinted
+            ? await Dialogs.AskUnsavedPrintAsync()
+            : await Dialogs.AskUnsavedChangesAsync(DocumentName ?? string.Empty);
+        return choice switch
+        {
+            UnsavedChoice.Save => await SaveAsync(),
+            UnsavedChoice.Discard => true,
+            _ => false,
+        };
     }
 
     /// <summary>Called by the page view when a page bitmap is on screen.</summary>
@@ -174,12 +262,117 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     public void Dispose() => CloseDocument();
 
+    private async Task<PdfOpenResult> OpenInBackgroundAsync(string path, string? password)
+    {
+        var opening = Task.Run(() => _engine.Open(path, password));
+        if (await Task.WhenAny(opening, Task.Delay(_progressDelay)) != opening)
+        {
+            State = ViewState.Loading;
+        }
+        return await opening;
+    }
+
+    private async Task OpenWithDialogAsync()
+    {
+        if (Dialogs is not null && await Dialogs.PickFileToOpenAsync() is { } path)
+        {
+            await OpenFileAsync(path);
+        }
+    }
+
+    /// <summary>
+    /// Save: a printed document is moved to a place the user chooses (with page changes, the edited
+    /// version is written and the print file removed); an opened file is replaced by its edited version.
+    /// </summary>
+    private async Task<bool> SaveAsync()
+    {
+        if (!HasUnsavedChanges || _sourcePath is null || Dialogs is null)
+        {
+            return false;
+        }
+        if (_isPrinted)
+        {
+            var title = PrintFileName.TitleOf(_sourcePath) ?? Texts.Get("Print.DefaultName");
+            var target = await Dialogs.PickSaveTargetAsync(title + ".pdf", null);
+            return target is not null && await SaveToAsync(target, removeSource: true);
+        }
+        return await SaveToAsync(_sourcePath, removeSource: false);
+    }
+
+    /// <summary>Saves an opened file under a new name or place; the original stays as it is.</summary>
+    private async Task SaveAsAsync()
+    {
+        if (!CanSaveAs || _sourcePath is null || Dialogs is null)
+        {
+            return;
+        }
+        var target = await Dialogs.PickSaveTargetAsync(Path.GetFileName(_sourcePath), Path.GetDirectoryName(_sourcePath));
+        if (target is not null)
+        {
+            await SaveToAsync(target, removeSource: false);
+        }
+    }
+
+    private async Task<bool> SaveToAsync(string target, bool removeSource)
+    {
+        var source = _sourcePath!;
+        var document = _document!;
+        var edited = _hasChanges;
+        var saved = await Task.Run(() => edited
+            ? _saver.Save(document.Save, target, removeSource ? source : null)
+            : _saver.Save(source, target, move: removeSource));
+        if (!saved)
+        {
+            await Dialogs!.ShowSaveErrorAsync(Path.GetFileName(target));
+            return false;
+        }
+        _sourcePath = target;
+        _isPrinted = false;
+        _hasChanges = false;
+        DocumentName = Path.GetFileName(target);
+        OnDocumentStateChanged();
+        return true;
+    }
+
     private void CloseDocument()
     {
-        Pages.Clear();
+        Overview.Clear();
         _document?.Dispose();
         _document = null;
+        _sourcePath = null;
+        _isPrinted = false;
+        _hasChanges = false;
+        DocumentName = null;
         State = ViewState.Empty;
+    }
+
+    private void OnDocumentStateChanged()
+    {
+        OnPropertyChanged(nameof(HasUnsavedChanges));
+        OnPropertyChanged(nameof(CanSave));
+        OnPropertyChanged(nameof(CanSaveAs));
+    }
+
+    /// <summary>Runs a user action, one at a time; errors are logged, never thrown into the UI loop.</summary>
+    private async void Run(Func<Task> action)
+    {
+        if (_busy)
+        {
+            return;
+        }
+        _busy = true;
+        try
+        {
+            await action();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "User action failed");
+        }
+        finally
+        {
+            _busy = false;
+        }
     }
 
     private void ToggleTheme()

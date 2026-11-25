@@ -23,7 +23,8 @@ internal static class WindowsPlatform
         IPrintInbox inbox = packaged
             ? new FolderPrintInbox(ApplicationData.Current.TemporaryFolder.Path)
             : new NoPrintInbox();
-        return new PlatformServices(new WindowsPaths(data), inbox, new HeaderInsets(0, CaptionButtonsWidth));
+        IDefaultPdfApp defaultApp = packaged ? new WindowsDefaultPdfApp() : new UnsupportedDefaultPdfApp();
+        return new PlatformServices(new WindowsPaths(data), inbox, new HeaderInsets(0, CaptionButtonsWidth), defaultApp);
     }
 
     private sealed record WindowsPaths(string DataDirectory) : IPlatformPaths;
@@ -31,6 +32,10 @@ internal static class WindowsPlatform
     private sealed class NoPrintInbox : IPrintInbox
     {
         public string? TryClaimNext() => null;
+
+        public void CleanUp(TimeSpan maxAge)
+        {
+        }
     }
 }
 

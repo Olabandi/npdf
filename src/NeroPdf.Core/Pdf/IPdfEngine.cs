@@ -17,6 +17,27 @@ public interface IPdfDocument : IDisposable
 
     /// <summary>Renders a page into a BGRA bitmap of the given pixel size on a white background.</summary>
     PdfBitmap RenderPage(int index, int width, int height);
+
+    /// <summary>
+    /// True after a page operation. All operations change only this in-memory working copy;
+    /// the file stays as it is until the document is saved.
+    /// </summary>
+    bool IsModified { get; }
+
+    /// <summary>Rotates pages by quarter turns (positive = clockwise), continuing from their current rotation.</summary>
+    void RotatePages(IReadOnlyCollection<int> indices, int quarterTurns);
+
+    /// <summary>Deletes pages. At least one page always remains.</summary>
+    void DeletePages(IReadOnlyCollection<int> indices);
+
+    /// <summary>
+    /// Moves pages so that they stand together, in their current order, starting at
+    /// <paramref name="targetIndex"/> of the resulting document.
+    /// </summary>
+    void MovePages(IReadOnlyCollection<int> indices, int targetIndex);
+
+    /// <summary>Writes the working copy as a complete PDF file (protection and form contents are kept).</summary>
+    void Save(Stream output);
 }
 
 public enum PdfOpenStatus

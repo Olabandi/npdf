@@ -4,5 +4,210 @@
              RequestedThemeVariant="Light">
   <Application.Styles>
     <FluentTheme />
+
+    <!-- Header buttons (Open, Save as, Save). Colours and sizes come from Themes/*.json and Config/layout.json. -->
+    <Style Selector="Button.header">
+      <Setter Property="Foreground" Value="{DynamicResource HeaderButtonForeground}" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="{DynamicResource HeaderButtonBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Padding" Value="{DynamicResource HeaderButtonPadding}" />
+      <Setter Property="CornerRadius" Value="{DynamicResource HeaderButtonCornerRadius}" />
+      <Setter Property="FontSize" Value="{DynamicResource Layout.HeaderButtonFontSize}" />
+    </Style>
+    <Style Selector="Button.header:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource HeaderButtonHoverBackground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource HeaderButtonBorder}" />
+      <Setter Property="Foreground" Value="{DynamicResource HeaderButtonForeground}" />
+    </Style>
+    <Style Selector="Button.header.primary">
+      <Setter Property="Background" Value="{DynamicResource HeaderPrimaryBackground}" />
+      <Setter Property="Foreground" Value="{DynamicResource HeaderPrimaryForeground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource HeaderPrimaryBackground}" />
+    </Style>
+    <Style Selector="Button.header.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource HeaderPrimaryHoverBackground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource HeaderPrimaryHoverBackground}" />
+      <Setter Property="Foreground" Value="{DynamicResource HeaderPrimaryForeground}" />
+    </Style>
+    <Style Selector="Button.header:disabled /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Opacity" Value="0.45" />
+    </Style>
+
+    <!-- Dialog buttons -->
+    <Style Selector="Button.dialog-primary">
+      <Setter Property="Background" Value="{DynamicResource ButtonPrimaryBackground}" />
+      <Setter Property="Foreground" Value="{DynamicResource ButtonPrimaryForeground}" />
+    </Style>
+    <Style Selector="Button.dialog-primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource ButtonPrimaryBackground}" />
+      <Setter Property="Foreground" Value="{DynamicResource ButtonPrimaryForeground}" />
+      <Setter Property="Opacity" Value="0.85" />
+    </Style>
+    <!-- Page overview: marked pages get a frame and a check mark; the empty check box appears on hover. -->
+    <Style Selector="StackPanel.thumb-item Border.thumb">
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="StackPanel.thumb-item:pointerover Border.thumb">
+      <Setter Property="BorderBrush" Value="{DynamicResource ThumbnailHoverBorder}" />
+    </Style>
+    <Style Selector="StackPanel.thumb-item.selected Border.thumb">
+      <Setter Property="BorderBrush" Value="{DynamicResource ThumbnailSelectedBorder}" />
+    </Style>
+    <Style Selector="StackPanel.thumb-item.dragged">
+      <Setter Property="Opacity" Value="0.35" />
+    </Style>
+    <Style Selector="StackPanel.thumb-item TextBlock.thumb-number">
+      <Setter Property="Foreground" Value="{DynamicResource MutedForeground}" />
+    </Style>
+    <Style Selector="StackPanel.thumb-item.current TextBlock.thumb-number">
+      <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <Style Selector="Button.thumb-check">
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="VerticalAlignment" Value="Top" />
+      <Setter Property="Margin" Value="{DynamicResource ThumbnailCheckMargin}" />
+      <Setter Property="Width" Value="{DynamicResource Layout.ThumbnailCheckSize}" />
+      <Setter Property="Height" Value="{DynamicResource Layout.ThumbnailCheckSize}" />
+      <Setter Property="Padding" Value="3" />
+      <Setter Property="CornerRadius" Value="{DynamicResource ThumbnailCheckCornerRadius}" />
+      <Setter Property="BorderThickness" Value="1.5" />
+      <Setter Property="BorderBrush" Value="{DynamicResource MutedForeground}" />
+      <Setter Property="Background" Value="{DynamicResource PageBackground}" />
+      <Setter Property="Foreground" Value="Transparent" />
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="StackPanel.thumb-item:pointerover Button.thumb-check">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="StackPanel.thumb-item.selected Button.thumb-check">
+      <Setter Property="IsVisible" Value="True" />
+      <Setter Property="Background" Value="{DynamicResource ThumbnailSelectedBorder}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ThumbnailSelectedBorder}" />
+      <Setter Property="Foreground" Value="{DynamicResource ContentBackground}" />
+    </Style>
+    <Style Selector="StackPanel.thumb-item.selected Button.thumb-check:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource ThumbnailSelectedBorder}" />
+      <Setter Property="Foreground" Value="{DynamicResource ContentBackground}" />
+    </Style>
+
+    <Style Selector="Border.thumb-tools">
+      <Setter Property="Canvas.Left" Value="{DynamicResource Layout.ThumbnailToolsGap}" />
+      <Setter Property="Canvas.Top" Value="0" />
+      <Setter Property="Background" Value="{DynamicResource PillBackground}" />
+      <Setter Property="CornerRadius" Value="{DynamicResource HeaderButtonCornerRadius}" />
+      <Setter Property="Padding" Value="2" />
+    </Style>
+    <Style Selector="Button.thumb-tool">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{DynamicResource PillForeground}" />
+      <Setter Property="Padding" Value="{DynamicResource ThumbnailToolPadding}" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="Button.thumb-tool PathIcon">
+      <Setter Property="Width" Value="{DynamicResource Layout.ThumbnailToolIconSize}" />
+      <Setter Property="Height" Value="{DynamicResource Layout.ThumbnailToolIconSize}" />
+    </Style>
+    <Style Selector="Button.thumb-tool:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource HeaderButtonHoverBackground}" />
+      <Setter Property="Foreground" Value="{DynamicResource PillForeground}" />
+    </Style>
+
+    <!-- Gap that opens smoothly where dragged pages will land. -->
+    <Style Selector="Border.drop-gap">
+      <Setter Property="Height" Value="0" />
+      <Setter Property="Opacity" Value="0" />
+      <Setter Property="HorizontalAlignment" Value="Center" />
+      <Setter Property="Width" Value="{DynamicResource Layout.ThumbnailWidth}" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Height" Duration="0:0:0.18" Easing="CubicEaseOut" />
+          <DoubleTransition Property="Opacity" Duration="0:0:0.18" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Border.drop-gap.open">
+      <Setter Property="Height" Value="{DynamicResource Layout.DropGapHeight}" />
+      <Setter Property="Opacity" Value="1" />
+    </Style>
+    <Style Selector="Rectangle.drop-gap-frame">
+      <Setter Property="Stroke" Value="{DynamicResource ThumbnailSelectedBorder}" />
+      <Setter Property="StrokeThickness" Value="2" />
+      <Setter Property="StrokeDashArray" Value="4,3" />
+      <Setter Property="RadiusX" Value="4" />
+      <Setter Property="RadiusY" Value="4" />
+      <Setter Property="Margin" Value="{DynamicResource DropGapFrameMargin}" />
+    </Style>
+
+    <Style Selector="Border.drag-ghost">
+      <Setter Property="BoxShadow" Value="{DynamicResource PageBoxShadow}" />
+      <Setter Property="RenderTransform" Value="rotate(-6deg)" />
+    </Style>
+    <Style Selector="Border.drag-count">
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="VerticalAlignment" Value="Top" />
+      <Setter Property="Margin" Value="{DynamicResource ThumbnailCheckMargin}" />
+      <Setter Property="Background" Value="{DynamicResource ThumbnailSelectedBorder}" />
+      <Setter Property="CornerRadius" Value="{DynamicResource ThumbnailCheckCornerRadius}" />
+      <Setter Property="Padding" Value="{DynamicResource DragCountPadding}" />
+    </Style>
+    <Style Selector="Border.drag-count TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource ContentBackground}" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="FontSize" Value="{DynamicResource Layout.ThumbnailNumberFontSize}" />
+    </Style>
+
+    <Style Selector="MenuItem.danger">
+      <Setter Property="Foreground" Value="{DynamicResource ErrorForeground}" />
+    </Style>
+
+    <!-- Page overview: collapsible; collapsed it keeps only the product tiles as icons. -->
+    <Style Selector="Border.sidebar">
+      <Setter Property="Width" Value="{DynamicResource Layout.SidebarWidth}" />
+    </Style>
+    <Style Selector="Border.sidebar.collapsed">
+      <Setter Property="Width" Value="{DynamicResource Layout.SidebarCollapsedWidth}" />
+    </Style>
+    <Style Selector="Button.sidebar-toggle">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="{DynamicResource SidebarTogglePadding}" />
+      <Setter Property="Foreground" Value="{DynamicResource MutedForeground}" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style Selector="Border.sidebar.collapsed Button.sidebar-toggle">
+      <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.sidebar-toggle PathIcon">
+      <Setter Property="Width" Value="{DynamicResource Layout.SidebarToggleIconSize}" />
+      <Setter Property="Height" Value="{DynamicResource Layout.SidebarToggleIconSize}" />
+    </Style>
+
+    <!-- Product tiles -->
+    <Style Selector="Button.tile">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Background" Value="{DynamicResource TileBackground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource TileBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Padding" Value="{DynamicResource TilePadding}" />
+      <Setter Property="CornerRadius" Value="{DynamicResource TileCornerRadius}" />
+    </Style>
+    <Style Selector="Button.tile:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource TileBackground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource TileHoverBorder}" />
+    </Style>
+    <Style Selector="Button.tile StackPanel.tile-text">
+      <Setter Property="Margin" Value="{DynamicResource TileTextMargin}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <!-- Collapsed page overview: tiles show only their icon (after the general tile style so it wins). -->
+    <Style Selector="Border.sidebar.collapsed Button.tile">
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="Padding" Value="{DynamicResource TileCollapsedPadding}" />
+    </Style>
   </Application.Styles>
 </Application>

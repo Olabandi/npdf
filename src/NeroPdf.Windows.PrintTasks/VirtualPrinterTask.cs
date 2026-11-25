@@ -78,7 +78,7 @@ namespace NeroPdf.Windows.PrintTasks
 
             var incoming = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, PrintFolders.Incoming);
             Directory.CreateDirectory(incoming);
-            var name = "Print_" + DateTime.Now.ToString("yyyyMMdd_HHmmss_fff") + "_" + Guid.NewGuid().ToString("N")[..8];
+            var name = NeroPdf.Core.Documents.PrintFileName.Create(args.Configuration.JobTitle, DateTime.Now, Guid.NewGuid());
             var partial = Path.Combine(incoming, name + PrintFolders.PartialExtension);
 
             using (var file = new FileStream(partial, FileMode.CreateNew, FileAccess.Write, FileShare.None))

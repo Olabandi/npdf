@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="NeroPdf.App.Dialogs.DialogWindow"
+        SizeToContent="WidthAndHeight"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        MinWidth="{DynamicResource Layout.DialogMinWidth}"
+        MaxWidth="{DynamicResource Layout.DialogMaxWidth}"
+        Background="{DynamicResource DialogBackground}">
+  <StackPanel Margin="{DynamicResource DialogPadding}" Spacing="{DynamicResource Layout.DialogSpacing}">
+    <TextBlock x:Name="Heading"
+               FontWeight="SemiBold"
+               FontSize="{DynamicResource Layout.DialogTitleFontSize}"
+               Foreground="{DynamicResource Foreground}"
+               TextWrapping="Wrap" />
+    <TextBlock x:Name="Message" Foreground="{DynamicResource MutedForeground}" TextWrapping="Wrap" />
+    <TextBox x:Name="Password" IsVisible="False" PasswordChar="●" RevealPassword="False" />
+    <TextBlock x:Name="ErrorText" IsVisible="False" Foreground="{DynamicResource ErrorForeground}" TextWrapping="Wrap" />
+    <StackPanel x:Name="Buttons" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="{DynamicResource Layout.DialogButtonSpacing}" />
+  </StackPanel>
+</Window>

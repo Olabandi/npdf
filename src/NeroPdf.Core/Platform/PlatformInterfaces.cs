@@ -18,6 +18,9 @@ public interface IPrintInbox
 {
     /// <summary>Claims the oldest completely written printed document, or returns null.</summary>
     string? TryClaimNext();
+
+    /// <summary>Removes printed documents that were never saved and are older than <paramref name="maxAge"/>.</summary>
+    void CleanUp(TimeSpan maxAge);
 }
 
 /// <summary>Space the operating system needs inside the custom header (window buttons).</summary>
@@ -25,8 +28,33 @@ public interface IPrintInbox
 /// <param name="Right">Space on the right, e.g. for the Windows caption buttons.</param>
 public readonly record struct HeaderInsets(double Left, double Right);
 
+/// <summary>Registration as the default app for PDF files. The user always confirms it in the system settings.</summary>
+public interface IDefaultPdfApp
+{
+    /// <summary>False where the platform offers no way to check or change it (e.g. unpackaged development build).</summary>
+    bool IsSupported { get; }
+
+    bool IsDefault();
+
+    /// <summary>Opens the system settings where the user can make Nero PDF the default PDF app.</summary>
+    void OpenSettings();
+}
+
+/// <summary>Used where the platform cannot check or change the default app.</summary>
+public sealed class UnsupportedDefaultPdfApp : IDefaultPdfApp
+{
+    public bool IsSupported => false;
+
+    public bool IsDefault() => false;
+
+    public void OpenSettings()
+    {
+    }
+}
+
 /// <summary>Everything the shared app needs from the platform project.</summary>
-public sealed record PlatformServices(IPlatformPaths Paths, IPrintInbox PrintInbox, HeaderInsets HeaderInsets);
+public sealed record PlatformServices(IPlatformPaths Paths, IPrintInbox PrintInbox, HeaderInsets HeaderInsets,
+    IDefaultPdfApp DefaultPdfApp);
 
 /// <summary>Sub folders of the temp folder used between the virtual printer and the app.</summary>
 public static class PrintFolders

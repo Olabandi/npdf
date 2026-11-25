@@ -64,6 +64,32 @@ internal static partial class PdfiumNative
     [LibraryImport(Library, EntryPoint = "FPDFBitmap_Destroy")]
     public static partial void BitmapDestroy(IntPtr bitmap);
 
+    [LibraryImport(Library, EntryPoint = "FPDFPage_GetRotation")]
+    public static partial int PageGetRotation(IntPtr page);
+
+    [LibraryImport(Library, EntryPoint = "FPDFPage_SetRotation")]
+    public static partial void PageSetRotation(IntPtr page, int rotate);
+
+    [LibraryImport(Library, EntryPoint = "FPDFPage_Delete")]
+    public static partial void PageDelete(IntPtr document, int index);
+
+    [LibraryImport(Library, EntryPoint = "FPDF_MovePages")]
+    public static unsafe partial int MovePages(IntPtr document, int* pageIndices, nuint length, int destinationIndex);
+
+    /// <summary>Full rewrite, no incremental update.</summary>
+    public const uint SaveNoIncremental = 2;
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct FileWrite
+    {
+        public int Version;
+        // int WriteBlock(FPDF_FILEWRITE* self, const void* data, unsigned long size); "unsigned long" is 32 bit on Windows.
+        public delegate* unmanaged[Cdecl]<FileWrite*, byte*, CULong, int> WriteBlock;
+    }
+
+    [LibraryImport(Library, EntryPoint = "FPDF_SaveAsCopy")]
+    public static unsafe partial int SaveAsCopy(IntPtr document, FileWrite* fileWrite, uint flags);
+
     [LibraryImport(Library, EntryPoint = "FPDF_RenderPageBitmap")]
     public static partial void RenderPageBitmap(IntPtr bitmap, IntPtr page, int startX, int startY,
         int sizeX, int sizeY, int rotate, int flags);
