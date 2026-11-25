@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Konsolenprogramm zum Anlegen, Entfernen und Reparieren des virtuellen Druckers.
+       Wird vom Installer und von der Store-Version aufgerufen. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeroPdf.Core\NeroPdf.Core.csproj" />
+  </ItemGroup>
+</Project>

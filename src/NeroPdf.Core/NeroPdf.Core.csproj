@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Plattformunabhängige Logik ohne Avalonia: PDF-Schnittstelle (PDFium), Seitenoperationen,
+       Übersetzungsschicht, Logging. Plattformpakete mit den nativen PDFium-Bibliotheken
+       binden die startbaren Projekte ein. -->
+</Project>

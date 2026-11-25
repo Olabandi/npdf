@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Gemeinsame Avalonia-Oberfläche für Windows und macOS. -->
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeroPdf.Core\NeroPdf.Core.csproj" />
+  </ItemGroup>
+</Project>

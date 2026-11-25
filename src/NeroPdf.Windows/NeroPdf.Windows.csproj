@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Startbares Programm für Windows mit den plattformspezifischen Implementierungen. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>NeroPdf</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="bblanchon.PDFium.Win32" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeroPdf.App\NeroPdf.App.csproj" />
+  </ItemGroup>
+</Project>

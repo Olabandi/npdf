@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Startbares Programm für MacOS mit den plattformspezifischen Implementierungen. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>NeroPdf</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="bblanchon.PDFium.macOS" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeroPdf.App\NeroPdf.App.csproj" />
+  </ItemGroup>
+</Project>
