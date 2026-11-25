@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "{0}. oldal / {1}",
+  "Viewer.Empty": "Nincs megnyitott dokumentum.",
+  "Viewer.Loading": "Dokumentum betöltése…",
+  "Theme.SwitchToDark": "Váltás sötét módra",
+  "Theme.SwitchToLight": "Váltás világos módra",
+  "Error.Title": "A fájl nem nyitható meg",
+  "Error.NotFound": "„{0}” nem található.",
+  "Error.Damaged": "„{0}” sérült vagy hiányos. A fájl nem módosult.",
+  "Error.PasswordRequired": "„{0}” jelszóval védett.",
+  "Error.Unsupported": "„{0}” nem támogatott módszerrel védett.",
+  "Error.Failed": "„{0}” nem nyitható meg. A fájl nem módosult."
+}

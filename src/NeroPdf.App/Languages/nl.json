@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "Pagina {0} van {1}",
+  "Viewer.Empty": "Geen document geopend.",
+  "Viewer.Loading": "Document laden…",
+  "Theme.SwitchToDark": "Overschakelen naar donkere modus",
+  "Theme.SwitchToLight": "Overschakelen naar lichte modus",
+  "Error.Title": "Bestand kan niet worden geopend",
+  "Error.NotFound": "‘{0}’ is niet gevonden.",
+  "Error.Damaged": "‘{0}’ is beschadigd of onvolledig. Er is niets aan het bestand gewijzigd.",
+  "Error.PasswordRequired": "‘{0}’ is beveiligd met een wachtwoord.",
+  "Error.Unsupported": "‘{0}’ is beveiligd met een methode die niet wordt ondersteund.",
+  "Error.Failed": "‘{0}’ kan niet worden geopend. Er is niets aan het bestand gewijzigd."
+}

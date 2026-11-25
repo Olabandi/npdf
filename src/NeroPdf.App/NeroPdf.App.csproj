@@ -1,10 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Gemeinsame Avalonia-Oberfläche für Windows und macOS. -->
+  <!-- Gemeinsame Avalonia-Oberfläche für Windows und macOS. Keine Plattformabfragen hier:
+       Plattformspezifisches kommt über PlatformServices aus den startbaren Projekten. -->
+  <PropertyGroup>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NeroPdf.Core\NeroPdf.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\*.png" />
+    <AvaloniaResource Include="Assets\*.ico" />
+    <Content Include="Languages\*.json;Themes\*.json;Config\*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

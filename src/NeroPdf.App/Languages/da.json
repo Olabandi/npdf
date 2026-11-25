@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "Side {0} af {1}",
+  "Viewer.Empty": "Intet dokument er åbent.",
+  "Viewer.Loading": "Indlæser dokument …",
+  "Theme.SwitchToDark": "Skift til mørk tilstand",
+  "Theme.SwitchToLight": "Skift til lys tilstand",
+  "Error.Title": "Filen kan ikke åbnes",
+  "Error.NotFound": "»{0}« blev ikke fundet.",
+  "Error.Damaged": "»{0}« er beskadiget eller ufuldstændig. Der er ikke ændret noget i filen.",
+  "Error.PasswordRequired": "»{0}« er beskyttet med adgangskode.",
+  "Error.Unsupported": "»{0}« er beskyttet med en metode, der ikke understøttes.",
+  "Error.Failed": "»{0}« kunne ikke åbnes. Der er ikke ændret noget i filen."
+}

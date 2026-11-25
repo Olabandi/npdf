@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "Strana {0} z {1}",
+  "Viewer.Empty": "Není otevřen žádný dokument.",
+  "Viewer.Loading": "Načítání dokumentu…",
+  "Theme.SwitchToDark": "Přepnout na tmavý režim",
+  "Theme.SwitchToLight": "Přepnout na světlý režim",
+  "Error.Title": "Soubor nelze otevřít",
+  "Error.NotFound": "Soubor „{0}“ nebyl nalezen.",
+  "Error.Damaged": "Soubor „{0}“ je poškozený nebo neúplný. Soubor nebyl nijak změněn.",
+  "Error.PasswordRequired": "Soubor „{0}“ je chráněn heslem.",
+  "Error.Unsupported": "Soubor „{0}“ je chráněn metodou, která není podporována.",
+  "Error.Failed": "Soubor „{0}“ nelze otevřít. Soubor nebyl nijak změněn."
+}

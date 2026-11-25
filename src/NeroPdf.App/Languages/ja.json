@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "{0} / {1} ページ",
+  "Viewer.Empty": "開いているドキュメントはありません。",
+  "Viewer.Loading": "ドキュメントを読み込んでいます…",
+  "Theme.SwitchToDark": "ダーク モードに切り替え",
+  "Theme.SwitchToLight": "ライト モードに切り替え",
+  "Error.Title": "ファイルを開けません",
+  "Error.NotFound": "「{0}」が見つかりません。",
+  "Error.Damaged": "「{0}」は破損しているか不完全です。ファイルは変更されていません。",
+  "Error.PasswordRequired": "「{0}」はパスワードで保護されています。",
+  "Error.Unsupported": "「{0}」はサポートされていない方法で保護されています。",
+  "Error.Failed": "「{0}」を開けませんでした。ファイルは変更されていません。"
+}

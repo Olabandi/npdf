@@ -1,0 +1,20 @@
+{
+  "Variant": "Light",
+  "Colors": {
+    "HeaderBackground": "#141414",
+    "HeaderForeground": "#FFFFFF",
+    "HeaderMutedForeground": "#CFCFCF",
+    "HeaderDivider": "#3A3A3A",
+    "ContentBackground": "#ECECEC",
+    "Foreground": "#1B1B1B",
+    "MutedForeground": "#666666",
+    "PillBackground": "#141414",
+    "PillForeground": "#FFFFFF",
+    "ModeButtonBackground": "#FFFFFF",
+    "ModeButtonForeground": "#1B1B1B",
+    "ModeButtonBorder": "#DCDCDC",
+    "PageBackground": "#FFFFFF",
+    "PageShadow": "#40000000",
+    "ErrorForeground": "#C62828"
+  }
+}

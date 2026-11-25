@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MSIX manifest of Nero PDF. __VERSION__, __PUBLISHER__ and __RESOURCES__ are filled in by build/package-windows.ps1. -->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:printsupport="http://schemas.microsoft.com/appx/manifest/printsupport/windows10"
+  xmlns:printsupport2="http://schemas.microsoft.com/appx/manifest/printsupport/windows10/2"
+  IgnorableNamespaces="uap uap10 desktop rescap printsupport printsupport2">
+
+  <Identity Name="NeroPdf" Publisher="__PUBLISHER__" Version="__VERSION__" ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>ms-resource:AppName</DisplayName>
+    <PublisherDisplayName>Nero</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <!-- Virtual printers (Print Support App v4) exist from Windows 11 24H2 on. -->
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.26100.0" MaxVersionTested="10.0.26200.0" />
+  </Dependencies>
+
+  <Resources>
+__RESOURCES__
+  </Resources>
+
+  <Applications>
+    <Application Id="App" Executable="NeroPdf.exe" EntryPoint="Windows.FullTrustApplication" uap10:SupportsMultipleInstances="true">
+      <uap:VisualElements DisplayName="ms-resource:AppName" Description="ms-resource:AppName" BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" />
+      <Extensions>
+        <printsupport:Extension Category="windows.printSupportExtension" EntryPoint="NeroPdf.Windows.PrintTasks.PrintSupportExtensionTask" />
+        <printsupport2:Extension Category="windows.printSupportVirtualPrinterWorkflow" EntryPoint="NeroPdf.Windows.PrintTasks.VirtualPrinterTask">
+          <printsupport2:PrintSupportVirtualPrinter DisplayName="ms-resource:PrinterName" PrinterUri="nero-pdf:printer"
+            PreferredInputFormat="application/oxps" PdcFile="Config\Printer.pdc">
+            <printsupport2:SupportedFormats>
+              <printsupport2:SupportedFormat Type="application/pdf" MaxVersion="1.7" />
+            </printsupport2:SupportedFormats>
+          </printsupport2:PrintSupportVirtualPrinter>
+        </printsupport2:Extension>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="NeroPdf.exe">
+          <desktop:FullTrustProcess>
+            <desktop:ParameterGroup GroupId="Print" Parameters="" />
+          </desktop:FullTrustProcess>
+        </desktop:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+
+  <Extensions>
+    <Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>WinRT.Host.dll</Path>
+        <ActivatableClass ActivatableClassId="NeroPdf.Windows.PrintTasks.VirtualPrinterTask" ThreadingModel="both" />
+        <ActivatableClass ActivatableClassId="NeroPdf.Windows.PrintTasks.PrintSupportExtensionTask" ThreadingModel="both" />
+      </InProcessServer>
+    </Extension>
+  </Extensions>
+</Package>

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Hintergrundaufgaben des virtuellen Druckers (Print Support App v4). Wird im MSIX-Paket über
+       WinRT.Host.dll geladen. Der Namespace muss dem Assemblynamen entsprechen.
+       macOS-Gegenstück: PDF-Service im Druckdialog (kommt mit dem Mac-Build). -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
+    <Platforms>x64</Platforms>
+    <Platform>x64</Platform>
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <CsWinRTComponent>true</CsWinRTComponent>
+    <CsWinRTWindowsMetadata>10.0.26100.0</CsWinRTWindowsMetadata>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeroPdf.Core\NeroPdf.Core.csproj" />
+  </ItemGroup>
+</Project>

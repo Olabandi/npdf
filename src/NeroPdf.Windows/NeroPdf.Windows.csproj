@@ -1,8 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Startbares Programm für Windows mit den plattformspezifischen Implementierungen. -->
+  <!-- Startbares Programm für Windows mit den Windows-Implementierungen der Plattform-Schnittstellen.
+       Wird als MSIX-Paket ausgeliefert (siehe packaging/windows), das auch den virtuellen Drucker anmeldet. -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
     <AssemblyName>NeroPdf</AssemblyName>
+    <!-- Precompiled code for a faster start. -->
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <ApplicationIcon>..\NeroPdf.App\Assets\app.ico</ApplicationIcon>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" />

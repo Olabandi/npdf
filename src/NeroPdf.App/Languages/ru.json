@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "Страница {0} из {1}",
+  "Viewer.Empty": "Нет открытых документов.",
+  "Viewer.Loading": "Загрузка документа…",
+  "Theme.SwitchToDark": "Переключить на тёмный режим",
+  "Theme.SwitchToLight": "Переключить на светлый режим",
+  "Error.Title": "Не удаётся открыть файл",
+  "Error.NotFound": "«{0}» не найден.",
+  "Error.Damaged": "«{0}» повреждён или неполон. Файл не был изменён.",
+  "Error.PasswordRequired": "«{0}» защищён паролем.",
+  "Error.Unsupported": "«{0}» защищён неподдерживаемым методом.",
+  "Error.Failed": "Не удалось открыть «{0}». Файл не был изменён."
+}

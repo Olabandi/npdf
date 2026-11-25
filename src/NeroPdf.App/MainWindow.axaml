@@ -1,5 +1,139 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="NeroPdf.App.MainWindow">
-  <!-- Bewusst leer: Das Layout folgt erst nach dem abgenommenen Designentwurf. -->
+        xmlns:l="using:NeroPdf.App.Infrastructure"
+        xmlns:vm="using:NeroPdf.App.ViewModels"
+        xmlns:c="using:NeroPdf.App.Controls"
+        xmlns:chrome="using:Avalonia.Controls.Chrome"
+        x:Class="NeroPdf.App.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="{l:Text App.Name}"
+        Icon="avares://NeroPdf.App/Assets/app.ico"
+        Width="{DynamicResource Layout.InitialWindowWidth}"
+        Height="{DynamicResource Layout.InitialWindowHeight}"
+        MinWidth="{DynamicResource Layout.MinWindowWidth}"
+        MinHeight="{DynamicResource Layout.MinWindowHeight}"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource ContentBackground}"
+        RequestedThemeVariant="Dark"
+        ExtendClientAreaToDecorationsHint="True"
+        chrome:WindowDrawnDecorations.TitleBarDecorations="MinimizeButton, MaximizeButton, CloseButton"
+        ExtendClientAreaTitleBarHeightHint="{DynamicResource Layout.HeaderHeight}">
+
+  <Window.Resources>
+    <StreamGeometry x:Key="MoonIcon">M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z</StreamGeometry>
+    <StreamGeometry x:Key="SunIcon">M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10zM11 1h2v3h-2zM11 20h2v3h-2zM1 11h3v2H1zM20 11h3v2h-3zM4.2 5.6l1.4-1.4l2.1 2.1l-1.4 1.4zM16.3 17.7l1.4-1.4l2.1 2.1l-1.4 1.4zM4.2 18.4l2.1-2.1l1.4 1.4l-2.1 2.1zM16.3 6.3l2.1-2.1l1.4 1.4l-2.1 2.1z</StreamGeometry>
+  </Window.Resources>
+
+  <Grid RowDefinitions="Auto,*">
+
+    <!-- Header: logo and "PDF", file name. The empty area works as the window's title bar. -->
+    <Border Grid.Row="0"
+            Height="{DynamicResource Layout.HeaderHeight}"
+            Background="{DynamicResource HeaderBackground}"
+            Padding="{DynamicResource HeaderPadding}"
+            chrome:WindowDecorationProperties.ElementRole="TitleBar">
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <Image Source="avares://NeroPdf.App/Assets/nero-logo-white.png"
+                 Height="{DynamicResource Layout.LogoHeight}"
+                 VerticalAlignment="Top" />
+          <TextBlock Text="{l:Text Header.Product}"
+                     FontWeight="Light"
+                     FontSize="{DynamicResource PdfFontSize}"
+                     LineHeight="{DynamicResource PdfFontSize}"
+                     Margin="{DynamicResource PdfTextMargin}"
+                     Foreground="{DynamicResource HeaderForeground}"
+                     VerticalAlignment="Top" />
+        </StackPanel>
+        <Border IsVisible="{Binding HasDocumentName}"
+                Margin="{DynamicResource FileNameMargin}"
+                Padding="{DynamicResource FileNamePadding}"
+                Height="{DynamicResource Layout.FileNameDividerHeight}"
+                BorderThickness="1,0,0,0"
+                BorderBrush="{DynamicResource HeaderDivider}">
+          <TextBlock Text="{Binding DocumentName}"
+                     FontSize="{DynamicResource Layout.FileNameFontSize}"
+                     Foreground="{DynamicResource HeaderMutedForeground}"
+                     TextTrimming="CharacterEllipsis"
+                     VerticalAlignment="Center" />
+        </Border>
+      </StackPanel>
+    </Border>
+
+    <!-- Content. The window itself is always "Dark" so the window buttons stay light on the black header;
+         the content follows the light or dark theme the user chose. -->
+    <ThemeVariantScope x:Name="ContentScope" Grid.Row="1">
+    <Grid Background="{DynamicResource ContentBackground}">
+
+      <ScrollViewer x:Name="PageScroller" IsVisible="{Binding HasPages}" HorizontalScrollBarVisibility="Disabled">
+        <ItemsControl x:Name="PageList" ItemsSource="{Binding Pages}" Margin="{DynamicResource PageListMargin}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <VirtualizingStackPanel />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="vm:PageViewModel">
+              <Border Margin="{DynamicResource PageItemMargin}"
+                      HorizontalAlignment="Center"
+                      BoxShadow="{DynamicResource PageBoxShadow}">
+                <c:PdfPageView Page="{Binding}"
+                               MaxPageWidth="{DynamicResource Layout.PageMaxWidth}"
+                               PageBackground="{DynamicResource PageBackground}"
+                               PageShown="OnPageShown" />
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <TextBlock IsVisible="{Binding IsEmpty}"
+                 Text="{l:Text Viewer.Empty}"
+                 Foreground="{DynamicResource MutedForeground}"
+                 HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+      <StackPanel IsVisible="{Binding IsLoading}" Spacing="{DynamicResource Layout.MessageSpacing}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="{l:Text Viewer.Loading}" Foreground="{DynamicResource Foreground}" HorizontalAlignment="Center" />
+        <ProgressBar IsIndeterminate="True" Foreground="{DynamicResource PillBackground}" />
+      </StackPanel>
+
+      <StackPanel IsVisible="{Binding IsError}" Spacing="{DynamicResource Layout.MessageSpacing}" MaxWidth="{DynamicResource Layout.MessageMaxWidth}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="{l:Text Error.Title}" FontWeight="SemiBold" FontSize="{DynamicResource Layout.MessageTitleFontSize}"
+                   Foreground="{DynamicResource Foreground}" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource MutedForeground}" TextWrapping="Wrap" />
+      </StackPanel>
+
+      <Border IsVisible="{Binding HasPages}"
+              HorizontalAlignment="Center" VerticalAlignment="Bottom"
+              Margin="{DynamicResource PillMargin}"
+              Background="{DynamicResource PillBackground}"
+              CornerRadius="{DynamicResource PillCornerRadius}" Padding="{DynamicResource PillPadding}">
+        <TextBlock Text="{Binding PageIndicator}"
+                   FontSize="{DynamicResource Layout.PillFontSize}"
+                   Foreground="{DynamicResource PillForeground}" />
+      </Border>
+
+      <Button HorizontalAlignment="Right" VerticalAlignment="Bottom"
+              Margin="{DynamicResource ModeButtonMargin}"
+              Width="{DynamicResource Layout.ModeButtonSize}"
+              Height="{DynamicResource Layout.ModeButtonSize}"
+              CornerRadius="{DynamicResource ModeButtonCornerRadius}"
+              Padding="0"
+              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+              Background="{DynamicResource ModeButtonBackground}"
+              Foreground="{DynamicResource ModeButtonForeground}"
+              BorderBrush="{DynamicResource ModeButtonBorder}"
+              BorderThickness="1"
+              Command="{Binding ToggleThemeCommand}"
+              ToolTip.Tip="{Binding ThemeToggleTooltip}">
+        <Panel>
+          <PathIcon Data="{StaticResource MoonIcon}" Width="{DynamicResource Layout.ModeIconSize}" Height="{DynamicResource Layout.ModeIconSize}" IsVisible="{Binding !IsDark}" />
+          <PathIcon Data="{StaticResource SunIcon}" Width="{DynamicResource Layout.ModeIconSize}" Height="{DynamicResource Layout.ModeIconSize}" IsVisible="{Binding IsDark}" />
+        </Panel>
+      </Button>
+    </Grid>
+    </ThemeVariantScope>
+  </Grid>
 </Window>

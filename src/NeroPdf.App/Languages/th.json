@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "หน้า {0} จาก {1}",
+  "Viewer.Empty": "ไม่มีเอกสารที่เปิดอยู่",
+  "Viewer.Loading": "กำลังโหลดเอกสาร…",
+  "Theme.SwitchToDark": "สลับเป็นโหมดมืด",
+  "Theme.SwitchToLight": "สลับเป็นโหมดสว่าง",
+  "Error.Title": "ไม่สามารถเปิดไฟล์ได้",
+  "Error.NotFound": "ไม่พบ “{0}”",
+  "Error.Damaged": "“{0}” เสียหายหรือไม่สมบูรณ์ ไฟล์ไม่ได้ถูกเปลี่ยนแปลง",
+  "Error.PasswordRequired": "“{0}” ได้รับการป้องกันด้วยรหัสผ่าน",
+  "Error.Unsupported": "“{0}” ได้รับการป้องกันด้วยวิธีที่ไม่รองรับ",
+  "Error.Failed": "ไม่สามารถเปิด “{0}” ได้ ไฟล์ไม่ได้ถูกเปลี่ยนแปลง"
+}

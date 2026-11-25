@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "Strona {0} z {1}",
+  "Viewer.Empty": "Brak otwartego dokumentu.",
+  "Viewer.Loading": "Wczytywanie dokumentu…",
+  "Theme.SwitchToDark": "Przełącz na tryb ciemny",
+  "Theme.SwitchToLight": "Przełącz na tryb jasny",
+  "Error.Title": "Nie można otworzyć pliku",
+  "Error.NotFound": "Nie znaleziono „{0}”.",
+  "Error.Damaged": "„{0}” jest uszkodzony lub niekompletny. Plik nie został zmieniony.",
+  "Error.PasswordRequired": "„{0}” jest chroniony hasłem.",
+  "Error.Unsupported": "„{0}” jest chroniony nieobsługiwaną metodą.",
+  "Error.Failed": "Nie można otworzyć „{0}”. Plik nie został zmieniony."
+}

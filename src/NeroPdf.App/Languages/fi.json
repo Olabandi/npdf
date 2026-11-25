@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "Sivu {0}/{1}",
+  "Viewer.Empty": "Asiakirjaa ei ole avattu.",
+  "Viewer.Loading": "Ladataan asiakirjaa…",
+  "Theme.SwitchToDark": "Vaihda tummaan tilaan",
+  "Theme.SwitchToLight": "Vaihda vaaleaan tilaan",
+  "Error.Title": "Tiedostoa ei voi avata",
+  "Error.NotFound": "Tiedostoa ”{0}” ei löytynyt.",
+  "Error.Damaged": "”{0}” on vioittunut tai keskeneräinen. Tiedostoon ei tehty muutoksia.",
+  "Error.PasswordRequired": "”{0}” on suojattu salasanalla.",
+  "Error.Unsupported": "”{0}” on suojattu menetelmällä, jota ei tueta.",
+  "Error.Failed": "Tiedostoa ”{0}” ei voitu avata. Tiedostoon ei tehty muutoksia."
+}

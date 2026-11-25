@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "Página {0} de {1}",
+  "Viewer.Empty": "Nenhum documento aberto.",
+  "Viewer.Loading": "A carregar o documento…",
+  "Theme.SwitchToDark": "Mudar para o modo escuro",
+  "Theme.SwitchToLight": "Mudar para o modo claro",
+  "Error.Title": "Não é possível abrir o ficheiro",
+  "Error.NotFound": "«{0}» não foi encontrado.",
+  "Error.Damaged": "«{0}» está danificado ou incompleto. O ficheiro não foi alterado.",
+  "Error.PasswordRequired": "«{0}» está protegido por palavra-passe.",
+  "Error.Unsupported": "«{0}» está protegido com um método não suportado.",
+  "Error.Failed": "Não foi possível abrir «{0}». O ficheiro não foi alterado."
+}

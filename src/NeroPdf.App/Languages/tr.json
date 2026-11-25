@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "Sayfa {0} / {1}",
+  "Viewer.Empty": "Açık belge yok.",
+  "Viewer.Loading": "Belge yükleniyor…",
+  "Theme.SwitchToDark": "Koyu moda geç",
+  "Theme.SwitchToLight": "Açık moda geç",
+  "Error.Title": "Dosya açılamıyor",
+  "Error.NotFound": "“{0}” bulunamadı.",
+  "Error.Damaged": "“{0}” hasarlı veya eksik. Dosyada hiçbir değişiklik yapılmadı.",
+  "Error.PasswordRequired": "“{0}” parola korumalı.",
+  "Error.Unsupported": "“{0}” desteklenmeyen bir yöntemle korunuyor.",
+  "Error.Failed": "“{0}” açılamadı. Dosyada hiçbir değişiklik yapılmadı."
+}

@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "第 {0} 页，共 {1} 页",
+  "Viewer.Empty": "未打开任何文档。",
+  "Viewer.Loading": "正在加载文档…",
+  "Theme.SwitchToDark": "切换到深色模式",
+  "Theme.SwitchToLight": "切换到浅色模式",
+  "Error.Title": "无法打开文件",
+  "Error.NotFound": "找不到“{0}”。",
+  "Error.Damaged": "“{0}”已损坏或不完整。文件未作任何更改。",
+  "Error.PasswordRequired": "“{0}”受密码保护。",
+  "Error.Unsupported": "“{0}”使用了不受支持的保护方式。",
+  "Error.Failed": "无法打开“{0}”。文件未作任何更改。"
+}

@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "Page {0} sur {1}",
+  "Viewer.Empty": "Aucun document ouvert.",
+  "Viewer.Loading": "Chargement du document…",
+  "Theme.SwitchToDark": "Passer en mode sombre",
+  "Theme.SwitchToLight": "Passer en mode clair",
+  "Error.Title": "Impossible d’ouvrir le fichier",
+  "Error.NotFound": "« {0} » est introuvable.",
+  "Error.Damaged": "« {0} » est endommagé ou incomplet. Le fichier n’a pas été modifié.",
+  "Error.PasswordRequired": "« {0} » est protégé par un mot de passe.",
+  "Error.Unsupported": "« {0} » est protégé par une méthode non prise en charge.",
+  "Error.Failed": "Impossible d’ouvrir « {0} ». Le fichier n’a pas été modifié."
+}

@@ -5,11 +5,18 @@ namespace NeroPdf.Windows;
 internal static class Program
 {
     [STAThread]
-    public static void Main(string[] args) =>
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+    public static int Main(string[] args) =>
+        NeroPdf.App.AppHost.Run(WindowsPlatform.Create(), WithoutActivationArguments(args), BuildAvaloniaApp);
 
-    // Wird auch vom Avalonia-Designer in Visual Studio verwendet.
+    // Also used by the Avalonia designer in Visual Studio.
     public static AppBuilder BuildAvaloniaApp() =>
         AppBuilder.Configure<NeroPdf.App.App>()
             .UsePlatformDetect();
+
+    // When the print task starts Nero PDF, Windows adds "/InvokerPRAID: App"; that is not a file to open.
+    private static string[] WithoutActivationArguments(string[] args)
+    {
+        var index = Array.FindIndex(args, a => a.StartsWith("/InvokerPRAID", StringComparison.OrdinalIgnoreCase));
+        return index < 0 ? args : args[..index];
+    }
 }

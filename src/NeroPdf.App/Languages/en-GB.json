@@ -1,0 +1,16 @@
+{
+  "App.Name": "Nero PDF",
+  "Header.Product": "PDF",
+  "Printer.Name": "Nero PDF",
+  "Viewer.PageIndicator": "Page {0} of {1}",
+  "Viewer.Empty": "No document open.",
+  "Viewer.Loading": "Loading document…",
+  "Theme.SwitchToDark": "Switch to dark mode",
+  "Theme.SwitchToLight": "Switch to light mode",
+  "Error.Title": "File cannot be opened",
+  "Error.NotFound": "‘{0}’ was not found.",
+  "Error.Damaged": "‘{0}’ is damaged or incomplete. Nothing was changed in the file.",
+  "Error.PasswordRequired": "‘{0}’ is password-protected.",
+  "Error.Unsupported": "‘{0}’ is protected with a method that is not supported.",
+  "Error.Failed": "‘{0}’ could not be opened. Nothing was changed in the file."
+}

@@ -5,10 +5,9 @@ namespace NeroPdf.MacOS;
 internal static class Program
 {
     [STAThread]
-    public static void Main(string[] args) =>
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+    public static int Main(string[] args) => NeroPdf.App.AppHost.Run(MacPlatform.Create(), args, BuildAvaloniaApp);
 
-    // Wird auch vom Avalonia-Designer in Visual Studio verwendet.
+    // Also used by the Avalonia designer.
     public static AppBuilder BuildAvaloniaApp() =>
         AppBuilder.Configure<NeroPdf.App.App>()
             .UsePlatformDetect();
