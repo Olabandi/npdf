@@ -49,7 +49,7 @@ Nero PDF ist ein schlanker PDF-Viewer und virtueller Drucker für Windows und ma
 - `src/NeroPdf.Windows.PrintTasks`: Hintergrundaufgabe des PSA-Druckers (CsWinRT, x64).
 - `tests/NeroPdf.Tests`: xUnit v3 über `TestFiles`.
 - MSIX bauen und signieren: `build/package-windows.ps1` (siehe `docs/Installation.md`).
-- Sitzungsende: Schreibt Stefan „Session Ende“, gilt der Skill `.claude/skills/session-ende` (Tests, Commit und Push, lokal bauen, ZIP mit Build und Anleitung ohne Quellcode in den OneDrive-Ordner über `build/session-end.ps1`).
+- Sitzungsende: Schreibt Stefan „Session Ende“, gilt der Skill `.claude/skills/session-ende` (Tests, Commit und Push, lokal bauen, ZIP nur mit Build und Kurzanleitung in den OneDrive-Ordner über `build/session-end.ps1`).
 - `experiments/` ist lokale Spielwiese und wird nicht committet.
 
 ## PDF-Engine

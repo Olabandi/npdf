@@ -6,9 +6,7 @@
 .DESCRIPTION
   The ZIP contains only what is needed to install and remove Nero PDF, no source code:
     - NeroPdf_<version>_x64.msix   the signed package
-    - Kurzanleitung.txt            install and uninstall in short (docs/Kurzanleitung.txt)
-    - Installation.md              the detailed guide (docs/Installation.md)
-    - uninstall-windows.ps1        removes Nero PDF and its printer completely
+    - Kurzanleitung.txt            install, use and uninstall in short (docs/Kurzanleitung.txt)
   Without -Version, the last part of the highest version (ZIPs in the target folder, installed package) is increased.
 
 .EXAMPLE
@@ -46,8 +44,6 @@ $work = Join-Path ([IO.Path]::GetTempPath()) "NeroPdf_session_end"
 Remove-Item $work -Recurse -Force -ErrorAction SilentlyContinue
 New-Item -ItemType Directory $work | Out-Null
 Copy-Item $msix $work
-Copy-Item (Join-Path $root "docs\Installation.md") $work
-Copy-Item (Join-Path $PSScriptRoot "uninstall-windows.ps1") $work
 $guide = [IO.File]::ReadAllText((Join-Path $root "docs\Kurzanleitung.txt")).Replace("__VERSION__", $Version)
 [IO.File]::WriteAllText((Join-Path $work "Kurzanleitung.txt"), $guide, (New-Object Text.UTF8Encoding $true))
 

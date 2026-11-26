@@ -20,7 +20,7 @@ Stefans Ablauf zum Ende einer Sitzung. Der Aufruf mit „Session Ende“ ist sei
 3. **Lokal bauen und ZIP ablegen**
    - `powershell -ExecutionPolicy Bypass -File build\session-end.ps1`
    - Das Skript erhöht die Versionsnummer selbst (letzte Stelle +1 gegenüber dem höchsten ZIP im Zielordner bzw. der installierten Version), baut und signiert das MSIX mit dem Zertifikat „Nero AG“, installiert es lokal und legt `NeroPdf_<Version>.zip` in `%USERPROFILE%\OneDrive\Stefan\Geschäftlich\Olabandi\Nero PDF` ab.
-   - Inhalt des ZIP: das MSIX, `Kurzanleitung.txt` (Installieren und Deinstallieren), `Installation.md`, `uninstall-windows.ps1`. Kein Quellcode.
+   - Inhalt des ZIP: nur das MSIX und `Kurzanleitung.txt` (Voraussetzungen, Installieren, Benutzen, Deinstallieren, Protokoll). Kein Quellcode, keine weiteren Dateien.
    - Soll eine bestimmte Version entstehen (z. B. neuer Entwicklungsschritt): `-Version 0.5.0.0` mitgeben.
 
 4. **Abschluss**

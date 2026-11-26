@@ -43,7 +43,7 @@ Ist bereits eine ältere Version installiert, wird sie aktualisiert.
 ## Entfernen
 
 1. *Einstellungen → Apps → Installierte Apps → Nero PDF → Deinstallieren.* Der Drucker verschwindet dabei. Das ist auf einem Testrechner geprüft: Paket, Drucker und Druckerport sind danach vollständig entfernt.
-2. Für Tests oder nach einer abgebrochenen Installation entfernt `build\uninstall-windows.ps1` Nero PDF samt Drucker vollständig (Ausgaben auf Englisch, als Hilfswerkzeug gedacht). Reste eines Druckerports entfernt es, wenn es „als Administrator“ läuft.
+2. Für Tests oder nach einer abgebrochenen Installation entfernt `build\uninstall-windows.ps1` Nero PDF samt Drucker vollständig (Ausgaben auf Englisch, Hilfswerkzeug für Entwickler und Tester, nicht im ZIP für Nutzer). Reste eines Druckerports entfernt es, wenn es „als Administrator“ läuft.
 3. Falls Windows beim Deinstallieren doch einen Druckerport-Eintrag in der Registry zurücklässt: Er stört nicht. Wer ihn entfernen will, löscht als Administrator unter `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Monitors\Virtual Port Monitor\Ports` den Schlüssel, der mit `NeroPdf_` beginnt, und startet den Rechner neu.
 
 ## Wenn etwas nicht funktioniert
