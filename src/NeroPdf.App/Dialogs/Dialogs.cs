@@ -1,6 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using NeroPdf.App.Infrastructure;
+using NeroPdf.App.ViewModels;
+using NeroPdf.Core.Platform;
 
 namespace NeroPdf.App.Dialogs;
 
@@ -26,6 +28,18 @@ public interface IDialogs
     Task<string?> PickFileToOpenAsync();
 
     Task<string?> PickSaveTargetAsync(string suggestedName, string? folder);
+
+    /// <summary>A message with an OK button.</summary>
+    Task ShowMessageAsync(string title, string text);
+
+    /// <summary>Picks a file of one of the given types (extensions without dot) for converting.</summary>
+    Task<string?> PickFileToConvertAsync(IReadOnlyList<string> extensions);
+
+    /// <summary>Scanner, paper source and colour; null if cancelled.</summary>
+    Task<ScanRequest?> AskScanSettingsAsync(IReadOnlyList<ScannerDevice> devices);
+
+    /// <summary>After a flatbed page: true to scan another page, false when done.</summary>
+    Task<bool> AskScanAnotherPageAsync(int pagesSoFar);
 }
 
 /// <summary>Dialogs shown over the main window.</summary>
@@ -80,6 +94,39 @@ public sealed class Dialogs(Window owner) : IDialogs
             [(Ok, Texts.Get("Common.Ok"))],
             Ok);
         await dialog.ShowDialog<string?>(owner);
+    }
+
+    public async Task ShowMessageAsync(string title, string text)
+    {
+        var dialog = DialogWindow.Create(title, text, [(Ok, Texts.Get("Common.Ok"))], Ok);
+        await dialog.ShowDialog<string?>(owner);
+    }
+
+    public async Task<string?> PickFileToConvertAsync(IReadOnlyList<string> extensions)
+    {
+        var files = await owner.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            AllowMultiple = false,
+            FileTypeFilter = [new FilePickerFileType(Texts.Get("FileDialog.PrintableFiles"))
+            {
+                Patterns = extensions.Select(e => "*." + e).ToList(),
+            }],
+        });
+        return files.Count > 0 ? files[0].TryGetLocalPath() : null;
+    }
+
+    public Task<ScanRequest?> AskScanSettingsAsync(IReadOnlyList<ScannerDevice> devices) =>
+        new ScanDialog(devices).ShowDialog<ScanRequest?>(owner);
+
+    public async Task<bool> AskScanAnotherPageAsync(int pagesSoFar)
+    {
+        const string more = "more";
+        var dialog = DialogWindow.Create(
+            Texts.Get("Scan.More.Title"),
+            Texts.Format("Scan.More.Text", pagesSoFar),
+            [(more, Texts.Get("Scan.More.Yes")), (Ok, Texts.Get("Scan.More.Done"))],
+            Ok);
+        return await dialog.ShowDialog<string?>(owner) == more;
     }
 
     public async Task<string?> PickFileToOpenAsync()

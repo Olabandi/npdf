@@ -48,7 +48,7 @@ public sealed class PromoLinksViewModel
     {
         try
         {
-            return JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(file)) ?? [];
+            return JsonSerializer.Deserialize(File.ReadAllText(file), AppJsonContext.Default.DictionaryStringString) ?? [];
         }
         catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
         {

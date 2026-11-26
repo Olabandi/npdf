@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- MSIX manifest of Nero PDF. __VERSION__, __PUBLISHER__ and __RESOURCES__ are filled in by build/package-windows.ps1. -->
+<!-- MSIX manifest of Nero PDF. __NAME__, __VERSION__, __PUBLISHER__, __PUBLISHER_DISPLAY_NAME__ and __RESOURCES__ are filled in by build/package-windows.ps1. -->
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
@@ -10,11 +10,11 @@
   xmlns:printsupport2="http://schemas.microsoft.com/appx/manifest/printsupport/windows10/2"
   IgnorableNamespaces="uap uap10 desktop rescap printsupport printsupport2">
 
-  <Identity Name="NeroPdf" Publisher="__PUBLISHER__" Version="__VERSION__" ProcessorArchitecture="x64" />
+  <Identity Name="__NAME__" Publisher="__PUBLISHER__" Version="__VERSION__" ProcessorArchitecture="x64" />
 
   <Properties>
     <DisplayName>ms-resource:AppName</DisplayName>
-    <PublisherDisplayName>Nero</PublisherDisplayName>
+    <PublisherDisplayName>__PUBLISHER_DISPLAY_NAME__</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -65,7 +65,7 @@ __RESOURCES__
   <Extensions>
     <Extension Category="windows.activatableClass.inProcessServer">
       <InProcessServer>
-        <Path>WinRT.Host.dll</Path>
+        <Path>NeroPdf.Windows.PrintTasks.dll</Path>
         <ActivatableClass ActivatableClassId="NeroPdf.Windows.PrintTasks.VirtualPrinterTask" ThreadingModel="both" />
         <ActivatableClass ActivatableClassId="NeroPdf.Windows.PrintTasks.PrintSupportExtensionTask" ThreadingModel="both" />
       </InProcessServer>

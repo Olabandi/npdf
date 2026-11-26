@@ -5,6 +5,9 @@
   <ItemGroup>
     <PackageVersion Include="Avalonia" Version="12.2.0" />
     <PackageVersion Include="Avalonia.Desktop" Version="12.2.0" />
+    <PackageVersion Include="Avalonia.Win32" Version="12.2.0" />
+    <PackageVersion Include="Avalonia.Skia" Version="12.2.0" />
+    <PackageVersion Include="Avalonia.HarfBuzz" Version="12.2.0" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.2.0" />
     <PackageVersion Include="bblanchon.PDFium.Win32" Version="160.0.8179" />
     <PackageVersion Include="bblanchon.PDFium.macOS" Version="160.0.8179" />

@@ -6,11 +6,11 @@ Maßgebliche Quelle ist das Konzept „Nero PDF – Konzept und Entwicklungsleit
 
 ## Produkt in einem Satz
 
-Nero PDF ist ein schlanker PDF-Viewer und virtueller Drucker für Windows und macOS mit genau diesen Funktionen: Anzeigen, Seitenübersicht, Umsortieren, Drehen, Löschen, Speichern (inkl. passwortgeschützter PDFs), dazu zwei feste Hinweis-Kacheln auf Nero AI und Nero Platinum unten in der Seitenübersicht (URLs in JSON, Öffnen im Standardbrowser).
+Nero PDF ist ein schlanker PDF-Viewer und virtueller Drucker für Windows und macOS mit genau diesen Funktionen: Anzeigen, Seitenübersicht, Umsortieren, Drehen, Löschen, Speichern (inkl. passwortgeschützter PDFs), dazu zwei feste Hinweis-Kacheln auf Nero AI und Nero Platinum unten in der Seitenübersicht (URLs in JSON, Öffnen im Standardbrowser). Zusätzlich, nur freigeschaltet bei installiertem Nero Start/Nero Platinum (Stefan, 26.11.2026): „Scannen …“ (direkt als PDF) und „Konvertieren …“ (druckbare Dateien über den Drucker Nero PDF als PDF). Ohne Nero-Installation sind beide Knöpfe von „Get Nero Platinum to unlock“ überdeckt.
 
 ## Umfang und Feature-Creep-Schutz
 
-- Nur die oben genannten Funktionen. **Keine** Formulare, Signaturen, Annotationen, OCR, Schwärzen oder Konvertierung, auch nicht als Vorbereitung.
+- Nur die oben genannten Funktionen. **Keine** Formulare, Signaturen, Annotationen, OCR, Schwärzen oder Export in andere Formate, auch nicht als Vorbereitung. Konvertieren gibt es nur als Druck über Nero PDF.
 - Claude ergänzt von sich aus keine Funktionen und schlägt keine zusätzlichen vor.
 - Schlägt Stefan etwas vor, das über den Umfang hinausgeht, zuerst nachfragen, etwa: „Stefan, bist du sicher? Du wolltest ein schlankes Programm mit wenigen, klar definierten Funktionen.“ Erst nach Bestätigung umsetzen und im Konzept nachtragen.
 - Leitbild: Im Zweifel gewinnt die einfachere Lösung.
@@ -28,7 +28,7 @@ Nero PDF ist ein schlanker PDF-Viewer und virtueller Drucker für Windows und ma
   2. Speichern und Öffnen (inkl. Drag and Drop, Passwortdialog)
   3. Navigation und Seitenübersicht
   4. Seitenbearbeitung (Drehen, Löschen, Umsortieren per Schaltflächen und Drag and Drop)
-  5. Danach Auslieferung: Mac-Build, Pipeline, Signierung, Store
+  5. Danach Auslieferung: signiertes MSIX aus dem lokalen Build an das Store-Team. Mac-Build und Pipeline entfallen vorerst (Stefan, 26.11.2026), solange keine Mac-Version gebaut wird.
 
 ## Plattformübergreifend von Anfang an
 
@@ -109,5 +109,5 @@ Nero PDF ist ein schlanker PDF-Viewer und virtueller Drucker für Windows und ma
 ## Build und Auslieferung
 
 - Jeder Stand muss lokal unter Windows bauen und starten (Hauptziel der Entwicklungsphase).
-- Mac-Build entsteht später in GitHub Actions.
+- Mac-Build und GitHub-Actions-Pipeline erst, wenn eine Mac-Version gebaut wird. Bis dahin reicht der lokale Build.
 - Zertifikate und Zugangsdaten gehören nie ins Repository, sondern in die Pipeline-Secrets.

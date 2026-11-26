@@ -2,5 +2,6 @@
   "Theme": "Light",
   "UnsavedPrintRetentionDays": 7,
   "SidebarCollapsed": false,
-  "SidebarWidth": 0
+  "SidebarWidth": 0,
+  "ScanDpi": 300
 }

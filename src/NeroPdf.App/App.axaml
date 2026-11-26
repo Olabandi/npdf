@@ -33,6 +33,17 @@
     <Style Selector="Button.header:disabled /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Opacity" Value="0.45" />
     </Style>
+    <!-- Covers Scan and Convert while no Nero suite is installed. -->
+    <Style Selector="Button.header.unlock">
+      <Setter Property="Background" Value="{DynamicResource HeaderUnlockBackground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource HeaderUnlockBorder}" />
+      <Setter Property="Foreground" Value="{DynamicResource HeaderUnlockForeground}" />
+    </Style>
+    <Style Selector="Button.header.unlock:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource HeaderUnlockHoverBackground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource HeaderUnlockBorder}" />
+      <Setter Property="Foreground" Value="{DynamicResource HeaderUnlockForeground}" />
+    </Style>
 
     <!-- Dialog buttons -->
     <Style Selector="Button.dialog-primary">

@@ -21,6 +21,12 @@ public interface IPrintInbox
 
     /// <summary>Removes printed documents that were never saved and are older than <paramref name="maxAge"/>.</summary>
     void CleanUp(TimeSpan maxAge);
+
+    /// <summary>
+    /// Path for a new document that Nero PDF creates itself (a scan). It is treated like a printed
+    /// document: temporary until the user saves it, then moved.
+    /// </summary>
+    string CreateDocumentPath(string title);
 }
 
 /// <summary>Space the operating system needs inside the custom header (window buttons).</summary>
@@ -54,7 +60,7 @@ public sealed class UnsupportedDefaultPdfApp : IDefaultPdfApp
 
 /// <summary>Everything the shared app needs from the platform project.</summary>
 public sealed record PlatformServices(IPlatformPaths Paths, IPrintInbox PrintInbox, HeaderInsets HeaderInsets,
-    IDefaultPdfApp DefaultPdfApp);
+    IDefaultPdfApp DefaultPdfApp, INeroSuite NeroSuite, IFileConverter Converter, IScanner Scanner);
 
 /// <summary>Sub folders of the temp folder used between the virtual printer and the app.</summary>
 public static class PrintFolders

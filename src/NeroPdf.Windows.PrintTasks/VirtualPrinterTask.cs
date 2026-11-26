@@ -7,6 +7,7 @@ using Windows.ApplicationModel.Background;
 using Windows.Graphics.Printing.Workflow;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using WinRT;
 
 namespace NeroPdf.Windows.PrintTasks
 {
@@ -39,7 +40,7 @@ namespace NeroPdf.Windows.PrintTasks
                 Complete();
             };
 
-            if (taskInstance.TriggerDetails is not PrintWorkflowVirtualPrinterTriggerDetails details)
+            if (TaskLogging.TriggerAs<PrintWorkflowVirtualPrinterTriggerDetails>(taskInstance.TriggerDetails) is not { } details)
             {
                 logger.LogError("Print task started with unexpected trigger");
                 Complete();
@@ -111,12 +112,20 @@ namespace NeroPdf.Windows.PrintTasks
         public void Run(IBackgroundTaskInstance taskInstance)
         {
             var deferral = taskInstance.GetDeferral();
+            var loggers = TaskLogging.Create();
+            var logger = loggers.CreateLogger<PrintSupportExtensionTask>();
             try
             {
-                taskInstance.Canceled += (_, _) => Safe(deferral.Complete);
-                if (taskInstance.TriggerDetails is not global::Windows.Graphics.Printing.PrintSupport.PrintSupportExtensionTriggerDetails details
+                logger.LogDebug("Print support session starting");
+                taskInstance.Canceled += (_, _) => Safe(() =>
+                {
+                    deferral.Complete();
+                    loggers.Dispose();
+                });
+                if (TaskLogging.TriggerAs<global::Windows.Graphics.Printing.PrintSupport.PrintSupportExtensionTriggerDetails>(taskInstance.TriggerDetails) is not { } details
                     || details.Session is null)
                 {
+                    logger.LogError("Print support task started with unexpected trigger");
                     deferral.Complete();
                     return;
                 }
@@ -129,8 +138,9 @@ namespace NeroPdf.Windows.PrintTasks
                 });
                 details.Session.Start();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.LogError(ex, "Print support session failed");
                 Safe(deferral.Complete);
             }
         }
@@ -150,6 +160,26 @@ namespace NeroPdf.Windows.PrintTasks
 
     internal static class TaskLogging
     {
+        /// <summary>
+        /// The trigger details arrive as a plain WinRT object. A C# type check needs type information that
+        /// Native AOT does not keep, so the object is asked for the interface directly.
+        /// </summary>
+        public static T? TriggerAs<T>(object? details) where T : class
+        {
+            if (details is T typed)
+            {
+                return typed;
+            }
+            try
+            {
+                return details?.As<T>();
+            }
+            catch (InvalidCastException)
+            {
+                return null;
+            }
+        }
+
         public static ILoggerFactory Create() =>
             AppLogging.Create(Path.Combine(ApplicationData.Current.LocalFolder.Path, "Logs"), verbose: false);
     }

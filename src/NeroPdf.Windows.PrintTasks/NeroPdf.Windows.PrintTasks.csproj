@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Hintergrundaufgaben des virtuellen Druckers (Print Support App v4). Wird im MSIX-Paket über
-       WinRT.Host.dll geladen. Der Namespace muss dem Assemblynamen entsprechen.
+  <!-- Hintergrundaufgaben des virtuellen Druckers (Print Support App v4). Wird im MSIX-Paket als
+       Native-AOT-DLL direkt geladen. Der Namespace muss dem Assemblynamen entsprechen.
        macOS-Gegenstück: PDF-Service im Druckdialog (kommt mit dem Mac-Build). -->
   <PropertyGroup>
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
@@ -9,8 +9,11 @@
     <Platform>x64</Platform>
     <PlatformTarget>x64</PlatformTarget>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <SelfContained>false</SelfContained>
     <CsWinRTComponent>true</CsWinRTComponent>
+    <!-- Native AOT: Windows loads the published DLL directly (DllGetActivationFactory). It needs no
+         installed .NET and no WinRT.Host.dll, so it also works when the app brings its own runtime
+         (Store package). Publishing needs the MSVC build tools of Visual Studio. -->
+    <PublishAot>true</PublishAot>
     <CsWinRTWindowsMetadata>10.0.26100.0</CsWinRTWindowsMetadata>
   </PropertyGroup>
   <ItemGroup>

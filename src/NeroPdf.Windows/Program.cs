@@ -11,7 +11,9 @@ internal static class Program
     // Also used by the Avalonia designer in Visual Studio.
     public static AppBuilder BuildAvaloniaApp() =>
         AppBuilder.Configure<NeroPdf.App.App>()
-            .UsePlatformDetect();
+            .UseWin32()
+            .UseSkia()
+            .UseHarfBuzz();
 
     // When the print task starts Nero PDF, Windows adds "/InvokerPRAID: App"; that is not a file to open.
     private static string[] WithoutActivationArguments(string[] args)

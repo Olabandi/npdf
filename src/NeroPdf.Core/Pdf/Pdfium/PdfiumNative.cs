@@ -93,4 +93,43 @@ internal static partial class PdfiumNative
     [LibraryImport(Library, EntryPoint = "FPDF_RenderPageBitmap")]
     public static partial void RenderPageBitmap(IntPtr bitmap, IntPtr page, int startX, int startY,
         int sizeX, int sizeY, int rotate, int flags);
+
+    // Creating documents from scanned images.
+
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct FileAccess
+    {
+        // "unsigned long" is 32 bit on Windows.
+        public CULong FileLength;
+        // int GetBlock(void* param, unsigned long position, unsigned char* buffer, unsigned long size);
+        public delegate* unmanaged[Cdecl]<IntPtr, CULong, byte*, CULong, int> GetBlock;
+        public IntPtr Param;
+    }
+
+    [LibraryImport(Library, EntryPoint = "FPDF_CreateNewDocument")]
+    public static partial IntPtr CreateNewDocument();
+
+    [LibraryImport(Library, EntryPoint = "FPDFPage_New")]
+    public static partial IntPtr PageNew(IntPtr document, int index, double width, double height);
+
+    [LibraryImport(Library, EntryPoint = "FPDFPageObj_NewImageObj")]
+    public static partial IntPtr PageObjNewImageObj(IntPtr document);
+
+    [LibraryImport(Library, EntryPoint = "FPDFPageObj_Destroy")]
+    public static partial void PageObjDestroy(IntPtr pageObject);
+
+    [LibraryImport(Library, EntryPoint = "FPDFImageObj_LoadJpegFileInline")]
+    public static unsafe partial int ImageObjLoadJpegFileInline(IntPtr* pages, int count, IntPtr imageObject, FileAccess* fileAccess);
+
+    [LibraryImport(Library, EntryPoint = "FPDFImageObj_GetImagePixelSize")]
+    public static partial int ImageObjGetImagePixelSize(IntPtr imageObject, out uint width, out uint height);
+
+    [LibraryImport(Library, EntryPoint = "FPDFImageObj_SetMatrix")]
+    public static partial int ImageObjSetMatrix(IntPtr imageObject, double a, double b, double c, double d, double e, double f);
+
+    [LibraryImport(Library, EntryPoint = "FPDFPage_InsertObject")]
+    public static partial void PageInsertObject(IntPtr page, IntPtr pageObject);
+
+    [LibraryImport(Library, EntryPoint = "FPDFPage_GenerateContent")]
+    public static partial int PageGenerateContent(IntPtr page);
 }

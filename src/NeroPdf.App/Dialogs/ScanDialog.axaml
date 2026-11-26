@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="using:NeroPdf.App.Infrastructure"
+        x:Class="NeroPdf.App.Dialogs.ScanDialog"
+        Title="{l:Text Scan.Title}"
+        SizeToContent="WidthAndHeight"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        MinWidth="{DynamicResource Layout.DialogMinWidth}"
+        MaxWidth="{DynamicResource Layout.DialogMaxWidth}"
+        Background="{DynamicResource DialogBackground}">
+  <!-- Scanner (only shown when there are several), paper source (only when the scanner has both) and colour. -->
+  <StackPanel Margin="{DynamicResource DialogPadding}" Spacing="{DynamicResource Layout.DialogSpacing}">
+    <TextBlock Text="{l:Text Scan.Title}"
+               FontWeight="SemiBold"
+               FontSize="{DynamicResource Layout.DialogTitleFontSize}"
+               Foreground="{DynamicResource Foreground}" />
+
+    <StackPanel x:Name="ScannerGroup" Spacing="4">
+      <TextBlock Text="{l:Text Scan.Scanner}" Foreground="{DynamicResource MutedForeground}" />
+      <ComboBox x:Name="Scanners" HorizontalAlignment="Stretch" />
+    </StackPanel>
+
+    <StackPanel x:Name="SourceGroup" Spacing="4">
+      <TextBlock Text="{l:Text Scan.Source}" Foreground="{DynamicResource MutedForeground}" />
+      <RadioButton x:Name="Feeder" GroupName="Source" Content="{l:Text Scan.Feeder}" Foreground="{DynamicResource Foreground}" />
+      <RadioButton x:Name="Flatbed" GroupName="Source" Content="{l:Text Scan.Flatbed}" Foreground="{DynamicResource Foreground}" />
+    </StackPanel>
+
+    <StackPanel Spacing="4">
+      <TextBlock Text="{l:Text Scan.ColorMode}" Foreground="{DynamicResource MutedForeground}" />
+      <RadioButton x:Name="ColorOption" GroupName="Color" Content="{l:Text Scan.Color}" IsChecked="True" Foreground="{DynamicResource Foreground}" />
+      <RadioButton x:Name="GrayOption" GroupName="Color" Content="{l:Text Scan.Gray}" Foreground="{DynamicResource Foreground}" />
+    </StackPanel>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="{DynamicResource Layout.DialogButtonSpacing}">
+      <Button x:Name="Start" Classes="dialog-primary" IsDefault="True" Content="{l:Text Scan.Start}" />
+      <Button x:Name="Cancel" Classes="dialog-secondary" IsCancel="True" Content="{l:Text Common.Cancel}" />
+    </StackPanel>
+  </StackPanel>
+</Window>

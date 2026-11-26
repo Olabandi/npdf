@@ -37,6 +37,7 @@ Ist bereits eine ältere Version installiert, wird sie aktualisiert.
 - **Seiten bearbeiten:** In der Seitenübersicht Seiten markieren (Klick, Strg+Klick, Umschalt+Klick oder das Auswahlfeld oben rechts an der Miniatur). Die kleine Werkzeugleiste neben der Markierung und das Rechtsklick-Menü drehen, verschieben und löschen. Entf löscht die markierten Seiten. Zum Umsortieren die Seiten mit der Maus an eine andere Stelle ziehen, dort öffnet sich eine Lücke. Alle Änderungen betreffen zunächst nur das geöffnete Dokument. Die Datei ändert sich erst beim Speichern.
 - **Seitenübersicht einklappen:** Der Pfeil oben in der Leiste klappt die Übersicht ein und aus. Die Produktkacheln bleiben dabei als Icons sichtbar.
 - **Seitenübersicht breiter oder schmaler:** Den rechten Rand der Seitenübersicht mit der Maus ziehen. Die Vorschauen wachsen mit, die Breite wird gemerkt. Schmaler als die Standardbreite geht es nicht.
+- **Scannen und Konvertieren:** Nur nutzbar, wenn Nero Start oder Nero Platinum installiert ist, sonst liegt „Mit Nero Platinum freischalten“ über den Knöpfen. „Scannen …“ fragt nach Scanner, Einzug oder Flachbett und Farbe und öffnet das Ergebnis wie einen Ausdruck. Beim Flachbett fragt Nero PDF nach jeder Seite, ob eine weitere folgt. „Konvertieren …“ wandelt Bilder selbst in ein PDF um, Textdateien druckt der Windows-Editor auf „Nero PDF“, andere Dateien (z. B. Word) das zuständige Programm. Das Ergebnis erscheint dann in einem eigenen Fenster.
 - **Hell und dunkel:** Das Symbol unten rechts schaltet um. Die Wahl wird gespeichert.
 - **Mehrere Drucke gleichzeitig** öffnen jeweils ein eigenes Fenster.
 
@@ -66,13 +67,21 @@ Häufige Ursachen:
 
 ## Paket selbst bauen (Entwickler)
 
-Voraussetzungen: .NET 10 SDK, Windows SDK (für `makeappx`, `makepri`, `signtool`) und das Code-Signing-Zertifikat „Nero AG“ im Zertifikatsspeicher des Benutzers. Zertifikate liegen nie im Repository.
+Voraussetzungen: .NET SDK 10 oder neuer, Windows SDK (für `makeappx`, `makepri`, `signtool`), die MSVC-C++-Buildtools aus Visual Studio (Einzelne Komponenten → „MSVC … C++-x64/x86-Buildtools“, für die Druckaufgabe als Native AOT) und das Code-Signing-Zertifikat „Nero AG“ im Zertifikatsspeicher des Benutzers. Zertifikate liegen nie im Repository.
 
 ```powershell
 .\build\package-windows.ps1 -CertificateName "Nero AG" -Version 0.1.2.0
 ```
 
 Das Paket liegt danach unter `artifacts\package\`. Mit `-Install` wird es gleich auf dem eigenen Rechner installiert. Die Versionsnummer muss bei jeder neuen Auslieferung steigen.
+
+Für den Microsoft Store:
+
+```powershell
+.\build\package-windows.ps1 -Store -Version 1.0.0.0
+```
+
+Das ergibt `NeroPdf_<Version>_x64_Store.msix` mit der Identität aus dem Partner Center (`packaging/windows/identity.json`) und eingebauter .NET Runtime, Nutzer brauchen also nichts weiter. Es ist nicht signiert, das übernimmt der Store, und lässt sich deshalb nicht lokal installieren. Die letzte Stelle der Versionsnummer muss 0 sein. Zum Testen derselben Bauweise mit eigener Signatur: `-SelfContained`.
 
 ## Lizenzen
 

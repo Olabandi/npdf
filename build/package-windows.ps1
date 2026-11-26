@@ -10,8 +10,14 @@
      signing certificate is taken from the current user's certificate store, by subject name
      (e.g. "Nero AG", as in the other Nero projects) or by thumbprint.
 
+  The package identity comes from packaging/windows/identity.json.
+  -Store builds the package for the Microsoft Store: Store identity, .NET runtime included (users
+  install nothing else), not signed (the Store signs it), last part of the version must be 0.
+  -SelfContained includes the .NET runtime in a sideload package too (to test the Store layout).
+
 .EXAMPLE
   .\build\package-windows.ps1 -CertificateName "Nero AG" -Version 0.1.0.0 -Install
+  .\build\package-windows.ps1 -Store -Version 1.0.0.0
 #>
 param(
     [string]$CertificateName,
@@ -19,7 +25,9 @@ param(
     [string]$TimestampUrl = "http://timestamp.globalsign.com/tsa/r6advanced1",
     [string]$Version = "0.1.0.0",
     [string]$Configuration = "Release",
-    [switch]$Install
+    [switch]$Install,
+    [switch]$Store,
+    [switch]$SelfContained
 )
 
 $ErrorActionPreference = "Stop"
@@ -27,7 +35,18 @@ $root = Split-Path -Parent $PSScriptRoot
 $out = Join-Path $root "artifacts\package"
 $layout = Join-Path $out "layout"
 $resources = Join-Path $out "resources"
-$msix = Join-Path $out "NeroPdf_$Version`_x64.msix"
+$identities = Get-Content (Join-Path $root "packaging\windows\identity.json") -Raw -Encoding UTF8 | ConvertFrom-Json
+if ($Store) {
+    if (([version]$Version).Revision -ne 0) { throw "Store packages need 0 as the last part of the version (e.g. 1.0.0.0)." }
+    if ($Install) { throw "Store packages are not signed and cannot be installed locally." }
+    $identity = $identities.Store
+    $SelfContained = $true
+    $msix = Join-Path $out "NeroPdf_$Version`_x64_Store.msix"
+}
+else {
+    $identity = $identities.Sideload
+    $msix = Join-Path $out "NeroPdf_$Version`_x64.msix"
+}
 
 $sdkBin = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Directory |
     Where-Object { $_.Name -match '^10\.' -and (Test-Path (Join-Path $_.FullName "x64\makeappx.exe")) } |
@@ -35,7 +54,10 @@ $sdkBin = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Director
 if (-not $sdkBin) { throw "Windows SDK with makeappx.exe not found." }
 $tools = Join-Path $sdkBin.FullName "x64"
 
-if ($CertificateThumbprint) {
+if ($Store) {
+    $publisher = $identity.Publisher
+}
+elseif ($CertificateThumbprint) {
     $cert = Get-Item "Cert:\CurrentUser\My\$CertificateThumbprint"
 }
 elseif ($CertificateName) {
@@ -44,23 +66,27 @@ elseif ($CertificateName) {
         Sort-Object NotAfter | Select-Object -Last 1
     if (-not $cert) { throw "No valid code signing certificate for '$CertificateName' in the current user's store." }
 }
-else { throw "Pass -CertificateName or -CertificateThumbprint." }
-Write-Host "Signing certificate: $($cert.Subject)"
+else { throw "Pass -CertificateName or -CertificateThumbprint (or -Store)." }
+if ($cert) {
+    $publisher = $cert.Subject
+    Write-Host "Signing certificate: $($cert.Subject)"
+}
 
 Remove-Item $out -Recurse -Force -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $layout, $resources | Out-Null
 
-Write-Host "Publishing app ..."
-dotnet publish (Join-Path $root "src\NeroPdf.Windows\NeroPdf.Windows.csproj") -c $Configuration -o $layout --nologo -v quiet
+Write-Host "Publishing app (self-contained: $SelfContained) ..."
+dotnet publish (Join-Path $root "src\NeroPdf.Windows\NeroPdf.Windows.csproj") -c $Configuration -o $layout --self-contained $(([bool]$SelfContained).ToString().ToLower()) --nologo -v quiet
 if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed." }
 
-Write-Host "Building print tasks ..."
+Write-Host "Publishing print tasks (Native AOT) ..."
+# One native DLL that Windows loads directly; it brings the part of .NET it needs, so it works with
+# and without .NET installed. The MSVC linker is found through vswhere, which must be on the path.
+$env:PATH = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer;$env:PATH"
 $tasksOut = Join-Path $out "tasks"
-dotnet build (Join-Path $root "src\NeroPdf.Windows.PrintTasks\NeroPdf.Windows.PrintTasks.csproj") -c $Configuration -o $tasksOut --nologo -v quiet
-if ($LASTEXITCODE -ne 0) { throw "Building the print tasks failed." }
-# The print tasks need WinRT.Host.dll and their own files; shared libraries come from the app.
-Get-ChildItem $tasksOut -File | Where-Object { -not (Test-Path (Join-Path $layout $_.Name)) -or $_.Name -like "WinRT.*" } |
-    Copy-Item -Destination $layout -Force
+dotnet publish (Join-Path $root "src\NeroPdf.Windows.PrintTasks\NeroPdf.Windows.PrintTasks.csproj") -c $Configuration -o $tasksOut --nologo -v quiet
+if ($LASTEXITCODE -ne 0) { throw "Publishing the print tasks failed (are the MSVC build tools of Visual Studio installed?)." }
+Copy-Item (Join-Path $tasksOut "NeroPdf.Windows.PrintTasks.dll") $layout -Force
 
 Write-Host "Adding manifest, logos and printer capabilities ..."
 Copy-Item (Join-Path $root "packaging\windows\Assets") $layout -Recurse -Force
@@ -96,7 +122,9 @@ foreach ($file in $languages) {
 }
 
 $manifest = Get-Content (Join-Path $root "packaging\windows\AppxManifest.template.xml") -Raw -Encoding UTF8
-$manifest = $manifest.Replace("__VERSION__", $Version).Replace("__PUBLISHER__", [Security.SecurityElement]::Escape($cert.Subject)).Replace("__RESOURCES__", ($resourceLines -join "`r`n"))
+$manifest = $manifest.Replace("__NAME__", $identity.Name).Replace("__VERSION__", $Version).
+    Replace("__PUBLISHER_DISPLAY_NAME__", [Security.SecurityElement]::Escape($identity.PublisherDisplayName)).
+    Replace("__PUBLISHER__", [Security.SecurityElement]::Escape($publisher)).Replace("__RESOURCES__", ($resourceLines -join "`r`n"))
 [IO.File]::WriteAllText((Join-Path $layout "AppxManifest.xml"), $manifest, (New-Object Text.UTF8Encoding $false))
 
 Write-Host "Generating resources.pri ..."
@@ -108,16 +136,19 @@ try {
 }
 finally { Pop-Location }
 
-Write-Host "Packing and signing ..."
+Write-Host "Packing ..."
 & (Join-Path $tools "makeappx.exe") pack /d $layout /p $msix /o | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "makeappx failed." }
-$timestamp = if ($TimestampUrl) { @("/tr", $TimestampUrl, "/td", "SHA256") } else { @() }
-& (Join-Path $tools "signtool.exe") sign /fd SHA256 @timestamp /sha1 $cert.Thumbprint /s My $msix | Out-Null
-if ($LASTEXITCODE -ne 0) { throw "signtool failed." }
+if ($cert) {
+    Write-Host "Signing ..."
+    $timestamp = if ($TimestampUrl) { @("/tr", $TimestampUrl, "/td", "SHA256") } else { @() }
+    & (Join-Path $tools "signtool.exe") sign /fd SHA256 @timestamp /sha1 $cert.Thumbprint /s My $msix | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "signtool failed." }
+}
 Write-Host "Package: $msix"
 
 if ($Install) {
     Write-Host "Installing ..."
     Add-AppxPackage -Path $msix -ForceUpdateFromAnyVersion -ForceApplicationShutdown
-    Write-Host "Installed: $((Get-AppxPackage -Name NeroPdf).Version)"
+    Write-Host "Installed: $((Get-AppxPackage -Name $identity.Name).Version)"
 }

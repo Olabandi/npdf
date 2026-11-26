@@ -99,6 +99,6 @@ public static class LanguageFiles
     public static IReadOnlyDictionary<string, string> Read(string path)
     {
         using var stream = File.OpenRead(path);
-        return JsonSerializer.Deserialize<Dictionary<string, string>>(stream) ?? new Dictionary<string, string>();
+        return JsonSerializer.Deserialize(stream, CoreJsonContext.Default.DictionaryStringString) ?? new Dictionary<string, string>();
     }
 }

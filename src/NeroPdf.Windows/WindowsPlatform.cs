@@ -24,19 +24,13 @@ internal static class WindowsPlatform
             ? new FolderPrintInbox(ApplicationData.Current.TemporaryFolder.Path)
             : new NoPrintInbox();
         IDefaultPdfApp defaultApp = packaged ? new WindowsDefaultPdfApp() : new UnsupportedDefaultPdfApp();
-        return new PlatformServices(new WindowsPaths(data), inbox, new HeaderInsets(0, CaptionButtonsWidth), defaultApp);
+        IFileConverter converter = packaged ? new WindowsFileConverter() : new UnsupportedExtras();
+        return new PlatformServices(new WindowsPaths(data), inbox, new HeaderInsets(0, CaptionButtonsWidth), defaultApp,
+            new WindowsNeroSuite(), converter, new WiaScanner());
     }
 
     private sealed record WindowsPaths(string DataDirectory) : IPlatformPaths;
 
-    private sealed class NoPrintInbox : IPrintInbox
-    {
-        public string? TryClaimNext() => null;
-
-        public void CleanUp(TimeSpan maxAge)
-        {
-        }
-    }
 }
 
 internal static class PackageInfo

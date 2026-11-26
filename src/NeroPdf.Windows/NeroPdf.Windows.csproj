@@ -12,9 +12,21 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
   </PropertyGroup>
+  <!-- No debug symbols in the package: the native PDBs of SkiaSharp and HarfBuzz alone are about 100 MB. -->
+  <Target Name="RemovePdbsFromPublish" AfterTargets="ComputeResolvedFilesToPublishList">
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(Extension)' == '.pdb'" />
+    </ItemGroup>
+  </Target>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" />
+    <!-- Only the Windows parts of Avalonia; Avalonia.Desktop would also bring Linux and macOS backends. -->
+    <PackageReference Include="Avalonia.Win32" />
+    <PackageReference Include="Avalonia.Skia" />
+    <PackageReference Include="Avalonia.HarfBuzz" />
     <PackageReference Include="bblanchon.PDFium.Win32" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Config\*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NeroPdf.App\NeroPdf.App.csproj" />

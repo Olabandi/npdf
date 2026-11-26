@@ -1,0 +1,12 @@
+{
+  "_comment": "Package identity, used by build/package-windows.ps1. Sideload: packages signed with our own certificate for testers (publisher = certificate subject). Store: identity from Partner Center (Product identity); the Store signs these packages itself.",
+  "Sideload": {
+    "Name": "NeroPdf",
+    "PublisherDisplayName": "Nero"
+  },
+  "Store": {
+    "Name": "NeroAG.NeroPDF",
+    "Publisher": "CN=58ABA535-5CFC-471D-88B8-2523DACB781D",
+    "PublisherDisplayName": "Nero AG"
+  }
+}

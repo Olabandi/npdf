@@ -39,6 +39,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private string _errorMessage = string.Empty;
     private bool _isDark;
     private bool _isSidebarExpanded = true;
+    private string _loadingText = Texts.Get("Viewer.Loading");
 
     public MainViewModel(IPdfEngine engine, DocumentSaver saver, PageOverviewViewModel overview, bool isDark,
         Action<bool> applyDarkTheme, TimeSpan progressDelay, ILogger<MainViewModel> logger)
@@ -69,6 +70,9 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     /// <summary>Tiles linking to other Nero products.</summary>
     public PromoLinksViewModel? PromoLinks { get; set; }
+
+    /// <summary>Scanning and converting (unlocked with Nero Platinum).</summary>
+    public ExtrasViewModel? Extras { get; set; }
 
     /// <summary>The hint to make Nero PDF the default PDF app.</summary>
     public DefaultAppHintViewModel? DefaultAppHint { get; set; }
@@ -119,6 +123,13 @@ public sealed class MainViewModel : ObservableObject, IDisposable
                 OnDocumentStateChanged();
             }
         }
+    }
+
+    /// <summary>Text above the progress bar: loading a document or, for example, scanning.</summary>
+    public string LoadingText
+    {
+        get => _loadingText;
+        private set => Set(ref _loadingText, value);
     }
 
     public bool IsEmpty => State == ViewState.Empty;
@@ -226,6 +237,38 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             State = ViewState.Showing;
             _logger.LogInformation("Document ready: {Pages} pages in {Ms} ms", Overview.Pages.Count, watch.ElapsedMilliseconds);
             return;
+        }
+    }
+
+    /// <summary>
+    /// Creates a new document (a scan) after confirming unsaved changes and shows it like a printed one:
+    /// temporary until saved. <paramref name="create"/> returns the file, or null if nothing was created.
+    /// </summary>
+    public async Task CreateDocumentAsync(string progressText, Func<Task<string?>> create)
+    {
+        if (!await ConfirmCloseAsync())
+        {
+            return;
+        }
+        CloseDocument();
+        LoadingText = progressText;
+        State = ViewState.Loading;
+        string? path = null;
+        try
+        {
+            path = await create();
+        }
+        finally
+        {
+            LoadingText = Texts.Get("Viewer.Loading");
+            if (path is null)
+            {
+                State = ViewState.Empty;
+            }
+        }
+        if (path is not null)
+        {
+            await OpenAsync(path, printed: true);
         }
     }
 
@@ -354,7 +397,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>Runs a user action, one at a time; errors are logged, never thrown into the UI loop.</summary>
-    private async void Run(Func<Task> action)
+    internal async void Run(Func<Task> action)
     {
         if (_busy)
         {

@@ -45,8 +45,9 @@ public partial class App : Application
             settingsStore.Save(settings);
         });
 
+        var engine = new PdfiumEngine(loggers.CreateLogger<PdfiumEngine>());
         var viewModel = new MainViewModel(
-            new PdfiumEngine(loggers.CreateLogger<PdfiumEngine>()),
+            engine,
             new DocumentSaver(loggers.CreateLogger<DocumentSaver>()),
             new PageOverviewViewModel(loggers.CreateLogger<PageOverviewViewModel>()),
             settings.Theme == ThemeManager.Dark,
@@ -67,8 +68,9 @@ public partial class App : Application
                 settingsStore.Save(settings);
             }
         };
-        viewModel.FirstPageShown += (_, _) =>
+        void LogStartup(object? sender, EventArgs e) =>
             logger.LogInformation("Startup: first page shown after {Ms} ms", AppHost.StartTime.ElapsedMilliseconds);
+        viewModel.FirstPageShown += LogStartup;
 
         var defaultAppHint = new DefaultAppHintViewModel(platform.DefaultPdfApp, loggers.CreateLogger<DefaultAppHintViewModel>());
         viewModel.DefaultAppHint = defaultAppHint;
@@ -77,14 +79,31 @@ public partial class App : Application
             loggers.CreateLogger<PromoLinksViewModel>());
         viewModel.PromoLinks = promoLinks;
 
+        var extras = new ExtrasViewModel(viewModel, platform.NeroSuite, platform.Converter, platform.Scanner,
+            platform.PrintInbox, engine, settings.ScanDpi, promoLinks.OpenNeroPlatinumCommand,
+            loggers.CreateLogger<ExtrasViewModel>());
+        viewModel.Extras = extras;
+
         var window = new MainWindow { DataContext = viewModel, SidebarSizer = sidebarSizer };
         promoLinks.Launcher = uri => window.Launcher.LaunchUriAsync(uri);
-        window.Activated += (_, _) => defaultAppHint.Refresh();
+        window.Activated += async (_, _) =>
+        {
+            defaultAppHint.Refresh();
+            await extras.RefreshAsync();
+        };
         if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
         {
             window.FlowDirection = Avalonia.Media.FlowDirection.RightToLeft;
         }
-        window.Opened += async (_, _) => await OpenInitialDocumentAsync(viewModel, platform, logger);
+        window.Opened += async (_, _) =>
+        {
+            _ = extras.RefreshAsync(); // In parallel: must not delay the first page.
+            if (!await OpenInitialDocumentAsync(viewModel, platform, logger))
+            {
+                // Only a start with a document counts for the start time, not a later scan or open.
+                viewModel.FirstPageShown -= LogStartup;
+            }
+        };
         window.Closed += (_, _) => viewModel.Dispose();
         return window;
     }
@@ -106,19 +125,20 @@ public partial class App : Application
         }
     }
 
-    private static async Task OpenInitialDocumentAsync(MainViewModel viewModel, PlatformServices platform, ILogger logger)
+    private static async Task<bool> OpenInitialDocumentAsync(MainViewModel viewModel, PlatformServices platform, ILogger logger)
     {
         if (AppHost.FileArgument is { } file)
         {
             await viewModel.OpenAsync(file, printed: false);
-            return;
+            return true;
         }
         var printed = platform.PrintInbox.TryClaimNext();
         if (printed is not null)
         {
             await viewModel.OpenAsync(printed, printed: true);
-            return;
+            return true;
         }
         logger.LogInformation("Started without a document");
+        return false;
     }
 }

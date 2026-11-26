@@ -5,7 +5,13 @@ public interface IPdfEngine
 {
     /// <summary>Opens a document. The file is read into memory and not kept locked.</summary>
     PdfOpenResult Open(string path, string? password = null);
+
+    /// <summary>Writes a new PDF with one page per JPEG image (scans); each page has the size of its image.</summary>
+    void CreateFromImages(IReadOnlyList<PdfImagePage> pages, Stream output);
 }
+
+/// <summary>A JPEG image and its resolution, which gives the page size.</summary>
+public sealed record PdfImagePage(string JpegPath, double Dpi);
 
 /// <summary>An opened document. All methods are thread-safe.</summary>
 public interface IPdfDocument : IDisposable

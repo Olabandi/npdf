@@ -18,13 +18,14 @@ public sealed class AppSettings
 
     /// <summary>Width of the page overview in device-independent pixels; 0 = default.</summary>
     public double SidebarWidth { get; set; }
+
+    /// <summary>Resolution of scans in dots per inch.</summary>
+    public int ScanDpi { get; set; }
 }
 
 /// <summary>Loads the defaults, overlays the user's settings file and saves changes.</summary>
 public sealed class SettingsStore(string defaultsPath, string userPath, ILogger<SettingsStore> logger)
 {
-    private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
-
     public AppSettings Load()
     {
         var merged = ReadObject(defaultsPath) ?? new JsonObject();
@@ -35,7 +36,7 @@ public sealed class SettingsStore(string defaultsPath, string userPath, ILogger<
                 merged[key] = value?.DeepClone();
             }
         }
-        var settings = merged.Deserialize<AppSettings>() ?? new AppSettings();
+        var settings = merged.Deserialize(CoreJsonContext.Default.AppSettings) ?? new AppSettings();
         logger.LogDebug("Settings loaded, theme {Theme}", settings.Theme);
         return settings;
     }
@@ -46,7 +47,7 @@ public sealed class SettingsStore(string defaultsPath, string userPath, ILogger<
         {
             Directory.CreateDirectory(Path.GetDirectoryName(userPath)!);
             var temp = userPath + ".tmp";
-            File.WriteAllText(temp, JsonSerializer.Serialize(settings, Options));
+            File.WriteAllText(temp, JsonSerializer.Serialize(settings, CoreJsonContext.Default.AppSettings));
             File.Move(temp, userPath, overwrite: true);
             logger.LogDebug("Settings saved");
         }

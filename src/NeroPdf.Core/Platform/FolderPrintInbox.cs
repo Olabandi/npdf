@@ -1,3 +1,5 @@
+using NeroPdf.Core.Documents;
+
 namespace NeroPdf.Core.Platform;
 
 /// <summary>
@@ -36,6 +38,12 @@ public sealed class FolderPrintInbox(string tempDirectory) : IPrintInbox
             }
         }
         return null;
+    }
+
+    public string CreateDocumentPath(string title)
+    {
+        Directory.CreateDirectory(Opened);
+        return Path.Combine(Opened, PrintFileName.Create(title, DateTime.Now, Guid.NewGuid()) + ".pdf");
     }
 
     public void CleanUp(TimeSpan maxAge)

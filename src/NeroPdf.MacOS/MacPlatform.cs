@@ -16,18 +16,12 @@ internal static class MacPlatform
         var data = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             "Library", "Application Support", "NeroPdf");
         // Default app on macOS (LSSetDefaultRoleHandlerForContentType) follows with the Mac build.
+        // Scanning and converting are Windows only for now (macOS: ImageCaptureCore, follows with the Mac build).
+        var extras = new UnsupportedExtras();
         return new PlatformServices(new MacPaths(data), new NoPrintInbox(), new HeaderInsets(WindowButtonsWidth, 0),
-            new UnsupportedDefaultPdfApp());
+            new UnsupportedDefaultPdfApp(), extras, extras, extras);
     }
 
     private sealed record MacPaths(string DataDirectory) : IPlatformPaths;
 
-    private sealed class NoPrintInbox : IPrintInbox
-    {
-        public string? TryClaimNext() => null;
-
-        public void CleanUp(TimeSpan maxAge)
-        {
-        }
-    }
 }

@@ -156,28 +156,34 @@ internal sealed class PdfiumDocument : IPdfDocument
         }
     }
 
-    public unsafe void Save(Stream output)
+    public void Save(Stream output)
     {
         lock (PdfiumEngine.Sync)
         {
             ThrowIfDisposed();
-            var target = GCHandle.Alloc(output);
-            try
+            SaveTo(_handle, output);
+        }
+    }
+
+    /// <summary>Writes a PDFium document as a complete file. The caller holds <see cref="PdfiumEngine.Sync"/>.</summary>
+    internal static unsafe void SaveTo(IntPtr handle, Stream output)
+    {
+        var target = GCHandle.Alloc(output);
+        try
+        {
+            var writer = new Writer
             {
-                var writer = new Writer
-                {
-                    Base = new PdfiumNative.FileWrite { Version = 1, WriteBlock = &WriteBlock },
-                    Target = GCHandle.ToIntPtr(target),
-                };
-                if (PdfiumNative.SaveAsCopy(_handle, &writer.Base, PdfiumNative.SaveNoIncremental) == 0)
-                {
-                    throw new IOException("PDFium could not write the document.");
-                }
-            }
-            finally
+                Base = new PdfiumNative.FileWrite { Version = 1, WriteBlock = &WriteBlock },
+                Target = GCHandle.ToIntPtr(target),
+            };
+            if (PdfiumNative.SaveAsCopy(handle, &writer.Base, PdfiumNative.SaveNoIncremental) == 0)
             {
-                target.Free();
+                throw new IOException("PDFium could not write the document.");
             }
+        }
+        finally
+        {
+            target.Free();
         }
     }
 

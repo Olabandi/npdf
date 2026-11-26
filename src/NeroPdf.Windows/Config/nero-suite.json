@@ -1,0 +1,6 @@
+{
+  "_comment": "Scanning and converting are unlocked when one of these keys exists under HKEY_LOCAL_MACHINE (64-bit or 32-bit view) and one of its value names is an existing file. neropack 213 = Nero Launcher (Nero Start / Nero Platinum).",
+  "RegistryKeys": [
+    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Installer\\neropack\\213"
+  ]
+}

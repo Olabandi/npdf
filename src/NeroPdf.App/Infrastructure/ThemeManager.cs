@@ -89,7 +89,7 @@ public sealed class ThemeManager
         ThemeFile? theme = null;
         try
         {
-            theme = JsonSerializer.Deserialize<ThemeFile>(File.ReadAllText(path));
+            theme = JsonSerializer.Deserialize(File.ReadAllText(path), AppJsonContext.Default.ThemeFile);
         }
         catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
         {
@@ -126,7 +126,7 @@ public sealed class ThemeManager
         var path = Path.Combine(_baseDirectory, "Config", "layout.json");
         try
         {
-            return JsonSerializer.Deserialize<Dictionary<string, double>>(File.ReadAllText(path)) ?? [];
+            return JsonSerializer.Deserialize(File.ReadAllText(path), AppJsonContext.Default.DictionaryStringDouble) ?? [];
         }
         catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException)
         {
@@ -135,7 +135,7 @@ public sealed class ThemeManager
         }
     }
 
-    private sealed class ThemeFile
+    internal sealed class ThemeFile
     {
         public string Variant { get; set; } = Light;
 

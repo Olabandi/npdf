@@ -66,6 +66,13 @@ public sealed class PdfiumEngine : IPdfEngine
         }
     }
 
+    public void CreateFromImages(IReadOnlyList<PdfImagePage> pages, Stream output)
+    {
+        var watch = Stopwatch.StartNew();
+        PdfiumImageDocument.Write(pages, output);
+        _logger.LogInformation("Document created from {Pages} images in {Ms} ms", pages.Count, watch.ElapsedMilliseconds);
+    }
+
     private static PdfOpenStatus MapError(PdfiumNative.ErrorCode error, string? password) => error switch
     {
         PdfiumNative.ErrorCode.File => PdfOpenStatus.NotFound,
