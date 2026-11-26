@@ -1,0 +1,32 @@
+Nero PDF __VERSION__ - Kurzanleitung
+====================================
+
+Voraussetzungen
+- Windows 11, Version 24H2 oder neuer, 64 Bit (pruefen: Windows-Taste, "winver").
+- .NET 10 Desktop Runtime (x64): https://dotnet.microsoft.com/download/dotnet/10.0
+  (dort ".NET Desktop Runtime 10", Installer fuer "x64").
+
+Installieren
+1. Doppelklick auf "NeroPdf___VERSION___x64.msix".
+2. Im App-Installer auf "Installieren" klicken. Eine aeltere Version wird dabei aktualisiert.
+   Das Paket ist mit dem Zertifikat der Nero AG signiert, ein weiteres Zertifikat ist nicht noetig.
+3. Nach wenigen Sekunden gibt es den Drucker "Nero PDF"
+   (Einstellungen > Bluetooth und Geraete > Drucker und Scanner).
+
+Benutzen
+- Drucken: in einem beliebigen Programm auf "Nero PDF" drucken, Nero PDF oeffnet sich mit dem Ergebnis.
+- Oeffnen: Nero PDF im Startmenue starten, dann "Oeffnen" (Strg+O) oder eine PDF-Datei ins Fenster ziehen.
+  Nero PDF steht auch bei "Oeffnen mit" fuer PDF-Dateien zur Verfuegung.
+- Seiten: links markieren, drehen, verschieben (auch per Ziehen) und loeschen, danach "Speichern".
+
+Deinstallieren
+1. Einstellungen > Apps > Installierte Apps > Nero PDF > Deinstallieren.
+   Der Drucker "Nero PDF" wird dabei mit entfernt.
+2. Nur falls danach noch Reste bleiben (z. B. nach einer abgebrochenen Installation):
+   Rechtsklick auf "uninstall-windows.ps1" > "Mit PowerShell ausfuehren".
+   Fuer Reste eines Druckerports das Skript in einer PowerShell "als Administrator" starten:
+   powershell -ExecutionPolicy Bypass -File .\uninstall-windows.ps1
+
+Bei Problemen
+- Protokoll: %LOCALAPPDATA%\Packages\NeroPdf_9kh40daskfajr\LocalState\Logs
+  (neueste Datei NeroPdf_<Datum>.log mitschicken).

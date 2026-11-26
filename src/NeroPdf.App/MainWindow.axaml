@@ -168,7 +168,7 @@
                 <ItemsControl.ItemTemplate>
                   <DataTemplate DataType="vm:PageViewModel">
                     <StackPanel Classes="thumb-item" Classes.selected="{Binding IsSelected}" Classes.current="{Binding IsCurrent}"
-                                Classes.dragged="{Binding IsDragged}" Background="Transparent">
+                                Classes.dragged="{Binding IsDragged}">
                       <!-- Gap that opens while pages are dragged to this place. -->
                       <Border Classes="drop-gap" Classes.open="{Binding HasGapBefore}">
                         <Rectangle Classes="drop-gap-frame" />
@@ -261,6 +261,16 @@
         </Grid>
       </Border>
 
+
+      <!-- Drag handle on the right edge of the page overview: wider or narrower, thumbnails follow. -->
+      <Border x:Name="SidebarSplitter" Grid.Row="0" Grid.Column="0"
+              IsVisible="{Binding ShowThumbnails}"
+              HorizontalAlignment="Right"
+              Width="{DynamicResource Layout.SidebarSplitterWidth}"
+              Margin="{DynamicResource SidebarSplitterMargin}"
+              Background="Transparent"
+              Cursor="SizeWestEast"
+              ZIndex="1" />
 
       <!-- Hint: make Nero PDF the default app for PDF files. -->
       <Border Grid.Row="1" Grid.ColumnSpan="2"

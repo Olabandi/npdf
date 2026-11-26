@@ -1,5 +1,6 @@
 {
   "Theme": "Light",
   "UnsavedPrintRetentionDays": 7,
-  "SidebarCollapsed": false
+  "SidebarCollapsed": false,
+  "SidebarWidth": 0
 }

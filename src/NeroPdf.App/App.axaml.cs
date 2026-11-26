@@ -39,6 +39,11 @@ public partial class App : Application
         var themes = new ThemeManager(this, baseDirectory, loggers.CreateLogger<ThemeManager>());
         themes.ApplyLayout(platform.HeaderInsets);
         themes.ApplyTheme(settings.Theme);
+        var sidebarSizer = new SidebarSizer(this, themes, settings.SidebarWidth, width =>
+        {
+            settings.SidebarWidth = width;
+            settingsStore.Save(settings);
+        });
 
         var viewModel = new MainViewModel(
             new PdfiumEngine(loggers.CreateLogger<PdfiumEngine>()),
@@ -72,7 +77,7 @@ public partial class App : Application
             loggers.CreateLogger<PromoLinksViewModel>());
         viewModel.PromoLinks = promoLinks;
 
-        var window = new MainWindow { DataContext = viewModel };
+        var window = new MainWindow { DataContext = viewModel, SidebarSizer = sidebarSizer };
         promoLinks.Launcher = uri => window.Launcher.LaunchUriAsync(uri);
         window.Activated += (_, _) => defaultAppHint.Refresh();
         if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)

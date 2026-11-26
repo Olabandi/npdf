@@ -66,6 +66,7 @@ public sealed class ThemeManager
         resources["DialogPadding"] = new Thickness(LayoutValue("DialogPadding"));
         resources["HintPadding"] = new Thickness(LayoutValue("HintPaddingHorizontal"), LayoutValue("HintPaddingVertical"));
         resources["SidebarPadding"] = new Thickness(LayoutValue("SidebarPadding"));
+        resources["SidebarSplitterMargin"] = new Thickness(0, 0, -LayoutValue("SidebarSplitterWidth") / 2, 0);
         resources["SidebarHeaderMargin"] = new Thickness(LayoutValue("SidebarPadding"), LayoutValue("SidebarPadding") / 2, LayoutValue("SidebarPadding") / 2, 0);
         resources["SidebarTogglePadding"] = new Thickness(LayoutValue("SidebarTogglePadding"));
         resources["TileCollapsedPadding"] = new Thickness(Math.Max(0, (LayoutValue("SidebarCollapsedWidth") - 2 * LayoutValue("SidebarPadding") - LayoutValue("TileIconSize") - 2) / 2), LayoutValue("TilePaddingVertical"));

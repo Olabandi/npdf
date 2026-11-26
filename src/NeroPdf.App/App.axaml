@@ -45,8 +45,11 @@
       <Setter Property="Opacity" Value="0.85" />
     </Style>
     <!-- Page overview: marked pages get a frame and a check mark; the empty check box appears on hover. -->
+    <Style Selector="StackPanel.thumb-item">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
     <Style Selector="StackPanel.thumb-item Border.thumb">
-      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="BorderThickness" Value="3" />
       <Setter Property="BorderBrush" Value="Transparent" />
     </Style>
     <Style Selector="StackPanel.thumb-item:pointerover Border.thumb">
@@ -54,6 +57,13 @@
     </Style>
     <Style Selector="StackPanel.thumb-item.selected Border.thumb">
       <Setter Property="BorderBrush" Value="{DynamicResource ThumbnailSelectedBorder}" />
+    </Style>
+    <Style Selector="StackPanel.thumb-item.selected">
+      <Setter Property="Background" Value="{DynamicResource ThumbnailSelectedBackground}" />
+    </Style>
+    <Style Selector="StackPanel.thumb-item.selected TextBlock.thumb-number">
+      <Setter Property="Foreground" Value="{DynamicResource Foreground}" />
+      <Setter Property="FontWeight" Value="Bold" />
     </Style>
     <Style Selector="StackPanel.thumb-item.dragged">
       <Setter Property="Opacity" Value="0.35" />

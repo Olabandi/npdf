@@ -15,6 +15,9 @@ public sealed class AppSettings
 
     /// <summary>The page overview on the left is collapsed.</summary>
     public bool SidebarCollapsed { get; set; }
+
+    /// <summary>Width of the page overview in device-independent pixels; 0 = default.</summary>
+    public double SidebarWidth { get; set; }
 }
 
 /// <summary>Loads the defaults, overlays the user's settings file and saves changes.</summary>

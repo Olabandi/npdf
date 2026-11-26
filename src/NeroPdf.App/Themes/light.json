@@ -30,6 +30,7 @@
     "SidebarBackground": "#F7F7F7",
     "SidebarBorder": "#DCDCDC",
     "ThumbnailHoverBorder": "#8C8C8C",
+    "ThumbnailSelectedBackground": "#DCDCDC",
     "ThumbnailSelectedBorder": "#141414",
     "TileBackground": "#FFFFFF",
     "TileBorder": "#DCDCDC",

@@ -20,7 +20,7 @@ Stand: Entwicklungsschritt 4. Nero PDF zeigt PDFs an, ist virtueller Drucker, ka
 Alternativ in PowerShell:
 
 ```powershell
-Add-AppxPackage -Path .\NeroPdf_0.4.0.0_x64.msix
+Add-AppxPackage -Path .\NeroPdf_0.4.2.0_x64.msix
 ```
 
 Ist bereits eine ältere Version installiert, wird sie aktualisiert.
@@ -36,13 +36,15 @@ Ist bereits eine ältere Version installiert, wird sie aktualisiert.
 - **Seitenübersicht und Blättern:** Links stehen Miniaturen aller Seiten, ein Klick springt zur Seite. Mit Bild auf/ab geht es seitenweise, mit Pos1/Ende zur ersten oder letzten Seite.
 - **Seiten bearbeiten:** In der Seitenübersicht Seiten markieren (Klick, Strg+Klick, Umschalt+Klick oder das Auswahlfeld oben rechts an der Miniatur). Die kleine Werkzeugleiste neben der Markierung und das Rechtsklick-Menü drehen, verschieben und löschen. Entf löscht die markierten Seiten. Zum Umsortieren die Seiten mit der Maus an eine andere Stelle ziehen, dort öffnet sich eine Lücke. Alle Änderungen betreffen zunächst nur das geöffnete Dokument. Die Datei ändert sich erst beim Speichern.
 - **Seitenübersicht einklappen:** Der Pfeil oben in der Leiste klappt die Übersicht ein und aus. Die Produktkacheln bleiben dabei als Icons sichtbar.
+- **Seitenübersicht breiter oder schmaler:** Den rechten Rand der Seitenübersicht mit der Maus ziehen. Die Vorschauen wachsen mit, die Breite wird gemerkt. Schmaler als die Standardbreite geht es nicht.
 - **Hell und dunkel:** Das Symbol unten rechts schaltet um. Die Wahl wird gespeichert.
 - **Mehrere Drucke gleichzeitig** öffnen jeweils ein eigenes Fenster.
 
 ## Entfernen
 
-1. *Einstellungen → Apps → Installierte Apps → Nero PDF → Deinstallieren.* Der Drucker verschwindet dabei.
-2. Optional: Windows lässt beim Deinstallieren einen Druckerport-Eintrag in der Registry zurück. Er stört nicht. Wer ihn entfernen will, löscht als Administrator unter `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Monitors\Virtual Port Monitor\Ports` den Schlüssel, der mit `NeroPdf_` beginnt, und startet den Rechner neu.
+1. *Einstellungen → Apps → Installierte Apps → Nero PDF → Deinstallieren.* Der Drucker verschwindet dabei. Das ist auf einem Testrechner geprüft: Paket, Drucker und Druckerport sind danach vollständig entfernt.
+2. Für Tests oder nach einer abgebrochenen Installation entfernt `build\uninstall-windows.ps1` Nero PDF samt Drucker vollständig (Ausgaben auf Englisch, als Hilfswerkzeug gedacht). Reste eines Druckerports entfernt es, wenn es „als Administrator“ läuft.
+3. Falls Windows beim Deinstallieren doch einen Druckerport-Eintrag in der Registry zurücklässt: Er stört nicht. Wer ihn entfernen will, löscht als Administrator unter `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Monitors\Virtual Port Monitor\Ports` den Schlüssel, der mit `NeroPdf_` beginnt, und startet den Rechner neu.
 
 ## Wenn etwas nicht funktioniert
 

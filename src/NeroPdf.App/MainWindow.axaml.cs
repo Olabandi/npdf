@@ -19,6 +19,8 @@ public partial class MainWindow : Window
     private PageViewModel? _pressedPage;
     private Point _pressPoint;
     private bool _dragging;
+    private double _splitterStartX = double.NaN;
+    private double _splitterStartWidth;
 
     public MainWindow()
     {
@@ -38,7 +40,13 @@ public partial class MainWindow : Window
         ThumbnailList.AddHandler(PointerReleasedEvent, OnThumbnailReleased, RoutingStrategies.Tunnel);
         ThumbnailList.AddHandler(PointerCaptureLostEvent, (_, _) => _ = EndDragAsync(drop: false));
         Closing += OnClosing;
+        SidebarSplitter.PointerPressed += OnSplitterPressed;
+        SidebarSplitter.PointerMoved += OnSplitterMoved;
+        SidebarSplitter.PointerReleased += OnSplitterReleased;
     }
+
+    /// <summary>Width of the page overview; set by the app.</summary>
+    public Infrastructure.SidebarSizer? SidebarSizer { get; init; }
 
     private MainViewModel? ViewModel => DataContext as MainViewModel;
 
@@ -317,6 +325,44 @@ public partial class MainWindow : Window
             }
         }
         return false;
+    }
+
+    // ---- Page overview width -----------------------------------------------------------------
+
+    private void OnSplitterPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (SidebarSizer is null || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
+        _splitterStartX = e.GetPosition(this).X;
+        _splitterStartWidth = SidebarSizer.Width;
+        e.Pointer.Capture(SidebarSplitter);
+        e.Handled = true;
+    }
+
+    private void OnSplitterMoved(object? sender, PointerEventArgs e)
+    {
+        if (SidebarSizer is null || double.IsNaN(_splitterStartX))
+        {
+            return;
+        }
+        // The main view keeps a minimum width, so the overview never covers the whole window.
+        var limit = Bounds.Width - (Application.Current?.Resources.TryGetResource("Layout.MainAreaMinWidth", null, out var min) == true && min is double m ? m : 320);
+        var delta = e.GetPosition(this).X - _splitterStartX;
+        // In right-to-left layouts the overview is on the right, so the direction turns round.
+        SidebarSizer.Apply(_splitterStartWidth + (FlowDirection == Avalonia.Media.FlowDirection.RightToLeft ? -delta : delta), limit);
+    }
+
+    private void OnSplitterReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (double.IsNaN(_splitterStartX))
+        {
+            return;
+        }
+        _splitterStartX = double.NaN;
+        e.Pointer.Capture(null);
+        SidebarSizer?.Save();
     }
 
     // ---- Main view --------------------------------------------------------------------------
