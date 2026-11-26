@@ -48,7 +48,7 @@
             Background="{DynamicResource HeaderBackground}"
             Padding="{DynamicResource HeaderPadding}"
             chrome:WindowDecorationProperties.ElementRole="TitleBar">
-      <Grid ColumnDefinitions="Auto,*,Auto,Auto" VerticalAlignment="Center">
+      <Grid ColumnDefinitions="Auto,Auto,Auto,*" VerticalAlignment="Center">
         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
           <Image Source="avares://NeroPdf.App/Assets/nero-logo-white.png"
                  Height="{DynamicResource Layout.LogoHeight}"
@@ -64,7 +64,7 @@
                        VerticalAlignment="Center" />
           </Grid>
         </StackPanel>
-        <Border Grid.Column="1"
+        <Border Grid.Column="3"
                 HorizontalAlignment="Left"
                 IsVisible="{Binding HasDocumentName}"
                 Margin="{DynamicResource FileNameMargin}"
@@ -78,60 +78,57 @@
                      TextTrimming="CharacterEllipsis"
                      VerticalAlignment="Center" />
         </Border>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"
+                    Spacing="{DynamicResource Layout.HeaderButtonSpacing}"
+                    Margin="{DynamicResource HeaderButtonsMargin}"
+                    chrome:WindowDecorationProperties.ElementRole="User">
+          <!-- Icon buttons; the name and the keyboard shortcut are in the tooltip (set in code). -->
+          <Button x:Name="OpenButton" Classes="header" Command="{Binding OpenCommand}"
+                  AutomationProperties.Name="{l:Text Header.Open}">
+            <PathIcon Data="{StaticResource OpenIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
+          </Button>
+          <Button x:Name="SaveAsButton" Classes="header" Command="{Binding SaveAsCommand}" IsVisible="{Binding CanSaveAs}"
+                  AutomationProperties.Name="{l:Text Header.SaveAs}">
+            <PathIcon Data="{StaticResource SaveAsIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
+          </Button>
+          <Button x:Name="SaveButton" Classes="header primary" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}"
+                  ToolTip.ShowOnDisabled="True" AutomationProperties.Name="{l:Text Header.Save}">
+            <PathIcon Data="{StaticResource SaveIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
+          </Button>
+        </StackPanel>
+        <!-- Scan and Convert: always visible. Without Nero Start / Nero Platinum they carry a small gold crown,
+             and a click opens the Nero Platinum page instead. -->
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
                     Spacing="{DynamicResource Layout.HeaderButtonSpacing}"
                     Margin="{DynamicResource HeaderButtonsMargin}"
                     chrome:WindowDecorationProperties.ElementRole="User">
-          <Button Classes="header" Command="{Binding OpenCommand}">
-            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Layout.HeaderButtonIconSpacing}">
-              <PathIcon Data="{StaticResource OpenIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
-              <TextBlock Text="{l:Text Header.Open}" VerticalAlignment="Center" />
-            </StackPanel>
-          </Button>
-          <Button Classes="header" Command="{Binding SaveAsCommand}" IsVisible="{Binding CanSaveAs}">
-            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Layout.HeaderButtonIconSpacing}">
-              <PathIcon Data="{StaticResource SaveAsIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
-              <TextBlock Text="{l:Text Header.SaveAs}" VerticalAlignment="Center" />
-            </StackPanel>
-          </Button>
-          <Button Classes="header primary" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}">
-            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Layout.HeaderButtonIconSpacing}">
-              <PathIcon Data="{StaticResource SaveIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
-              <TextBlock Text="{l:Text Header.Save}" VerticalAlignment="Center" FontWeight="SemiBold" />
-            </StackPanel>
-          </Button>
-        </StackPanel>
-        <!-- Scan and Convert: only usable with Nero Start / Nero Platinum installed, otherwise covered by "unlock". -->
-        <Panel Grid.Column="3" VerticalAlignment="Center"
-               Margin="{DynamicResource HeaderButtonsMargin}"
-               chrome:WindowDecorationProperties.ElementRole="User">
-          <StackPanel Orientation="Horizontal"
-                      Spacing="{DynamicResource Layout.HeaderButtonSpacing}"
-                      IsEnabled="{Binding Extras.IsUnlocked, FallbackValue=False}">
-            <Button Classes="header" Command="{Binding Extras.ScanCommand}">
-              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Layout.HeaderButtonIconSpacing}">
+            <Button Classes="header" Classes.locked="{Binding Extras.IsLocked, FallbackValue=True}"
+                    Command="{Binding Extras.ScanCommand}" AutomationProperties.Name="{l:Text Header.Scan}">
+              <ToolTip.Tip>
+                <Panel>
+                  <TextBlock Text="{l:Text Header.Scan.TipLocked}" IsVisible="{Binding Extras.IsLocked, FallbackValue=True}" />
+                  <TextBlock Text="{l:Text Header.Scan.Tip}" IsVisible="{Binding Extras.IsUnlocked, FallbackValue=False}" />
+                </Panel>
+              </ToolTip.Tip>
+              <Panel>
                 <PathIcon Data="{StaticResource ScanIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
-                <TextBlock Text="{l:Text Header.Scan}" VerticalAlignment="Center" />
-              </StackPanel>
+                <PathIcon Classes="lock-badge" Data="{StaticResource CrownIcon}" IsVisible="{Binding Extras.IsLocked, FallbackValue=True}" />
+              </Panel>
             </Button>
-            <Button Classes="header" Command="{Binding Extras.ConvertCommand}">
-              <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Layout.HeaderButtonIconSpacing}">
+            <Button Classes="header" Classes.locked="{Binding Extras.IsLocked, FallbackValue=True}"
+                    Command="{Binding Extras.ConvertCommand}" AutomationProperties.Name="{l:Text Header.Convert}">
+              <ToolTip.Tip>
+                <Panel>
+                  <TextBlock Text="{l:Text Header.Convert.TipLocked}" IsVisible="{Binding Extras.IsLocked, FallbackValue=True}" />
+                  <TextBlock Text="{l:Text Header.Convert.Tip}" IsVisible="{Binding Extras.IsUnlocked, FallbackValue=False}" />
+                </Panel>
+              </ToolTip.Tip>
+              <Panel>
                 <PathIcon Data="{StaticResource ConvertIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
-                <TextBlock Text="{l:Text Header.Convert}" VerticalAlignment="Center" />
-              </StackPanel>
+                <PathIcon Classes="lock-badge" Data="{StaticResource CrownIcon}" IsVisible="{Binding Extras.IsLocked, FallbackValue=True}" />
+              </Panel>
             </Button>
-          </StackPanel>
-          <Button Classes="header unlock"
-                  IsVisible="{Binding Extras.IsLocked, FallbackValue=True}"
-                  Command="{Binding Extras.UnlockCommand}"
-                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
-            <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Layout.HeaderButtonIconSpacing}">
-              <PathIcon Data="{StaticResource CrownIcon}" Width="{DynamicResource Layout.HeaderButtonIconSize}" Height="{DynamicResource Layout.HeaderButtonIconSize}" />
-              <TextBlock Text="{l:Text Extras.Unlock}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-            </StackPanel>
-          </Button>
-        </Panel>
+        </StackPanel>
       </Grid>
     </Border>
 
@@ -143,23 +140,24 @@
       <!-- Page overview: thumbnails of all pages, product tiles at the bottom. -->
       <Border Grid.Row="0" Grid.Column="0"
               Classes="sidebar"
-              Classes.collapsed="{Binding !IsSidebarExpanded}"
+              Classes.collapsed="{Binding !IsSidebarOpen}"
               Background="{DynamicResource SidebarBackground}"
               BorderBrush="{DynamicResource SidebarBorder}"
               BorderThickness="0,0,1,0">
         <Grid RowDefinitions="Auto,*,Auto">
           <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="{DynamicResource SidebarHeaderMargin}">
-            <TextBlock IsVisible="{Binding ShowThumbnails}"
+            <TextBlock IsVisible="{Binding IsSidebarOpen}"
                        Text="{Binding Overview.PageCountText}"
                        VerticalAlignment="Center"
                        FontSize="{DynamicResource Layout.SidebarCaptionFontSize}"
                        Foreground="{DynamicResource MutedForeground}" />
             <Button Grid.Column="1" Classes="sidebar-toggle"
+                    IsVisible="{Binding HasPages}"
                     Command="{Binding ToggleSidebarCommand}"
                     ToolTip.Tip="{Binding SidebarToggleTooltip}">
               <Panel>
-                <PathIcon Data="{StaticResource CollapseIcon}" IsVisible="{Binding IsSidebarExpanded}" />
-                <PathIcon Data="{StaticResource ExpandIcon}" IsVisible="{Binding !IsSidebarExpanded}" />
+                <PathIcon Data="{StaticResource CollapseIcon}" IsVisible="{Binding IsSidebarOpen}" />
+                <PathIcon Data="{StaticResource ExpandIcon}" IsVisible="{Binding !IsSidebarOpen}" />
               </Panel>
             </Button>
           </Grid>
@@ -208,10 +206,9 @@
                       </Border>
                       <Grid HorizontalAlignment="Center" Margin="{DynamicResource ThumbnailItemMargin}">
                         <StackPanel>
-                          <Border Classes="thumb" Width="{DynamicResource Layout.ThumbnailWidth}" BoxShadow="{DynamicResource PageBoxShadow}">
+                          <Border Classes="thumb" BoxShadow="{DynamicResource PageBoxShadow}">
                             <Panel>
-                              <c:PdfPageView Page="{Binding}"
-                                             MaxPageWidth="{DynamicResource Layout.ThumbnailWidth}"
+                              <c:PdfPageView Classes="thumb-page" Page="{Binding}"
                                              PageBackground="{DynamicResource PageBackground}" />
                               <Button Classes="thumb-check" ToolTip.Tip="{l:Text Pages.Select}" Click="OnThumbnailCheckClick">
                                 <PathIcon Data="{StaticResource CheckIcon}" />
@@ -246,9 +243,9 @@
           </ScrollViewer>
           <!-- Pages being dragged: a small stack with the number of pages, following the pointer. -->
           <Canvas Grid.Row="0" Grid.RowSpan="3" IsHitTestVisible="False">
-            <Border x:Name="DragGhost" IsVisible="False" Classes="drag-ghost" Width="{DynamicResource Layout.ThumbnailWidth}">
+            <Border x:Name="DragGhost" IsVisible="False" Classes="drag-ghost">
               <Panel>
-                <c:PdfPageView x:Name="DragGhostPage" MaxPageWidth="{DynamicResource Layout.ThumbnailWidth}" PageBackground="{DynamicResource PageBackground}" />
+                <c:PdfPageView x:Name="DragGhostPage" Classes="thumb-page" PageBackground="{DynamicResource PageBackground}" />
                 <Border Classes="drag-count">
                   <TextBlock x:Name="DragGhostCount" />
                 </Border>
@@ -267,7 +264,7 @@
                   </Border.Background>
                   <PathIcon Data="{StaticResource SparkleIcon}" Foreground="{DynamicResource TileIconForeground}" Width="{DynamicResource Layout.ModeIconSize}" Height="{DynamicResource Layout.ModeIconSize}" />
                 </Border>
-                <StackPanel Grid.Column="1" Classes="tile-text" IsVisible="{Binding IsSidebarExpanded}">
+                <StackPanel Grid.Column="1" Classes="tile-text" IsVisible="{Binding IsSidebarOpen}">
                   <TextBlock Text="{l:Text Promo.NeroAi.Title}" FontWeight="SemiBold" FontSize="{DynamicResource Layout.TileTitleFontSize}" Foreground="{DynamicResource Foreground}" />
                   <TextBlock Text="{l:Text Promo.NeroAi.Text}" FontSize="{DynamicResource Layout.TileTextFontSize}" Foreground="{DynamicResource MutedForeground}" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
@@ -284,7 +281,7 @@
                   </Border.Background>
                   <PathIcon Data="{StaticResource CrownIcon}" Foreground="{DynamicResource TileIconForeground}" Width="{DynamicResource Layout.ModeIconSize}" Height="{DynamicResource Layout.ModeIconSize}" />
                 </Border>
-                <StackPanel Grid.Column="1" Classes="tile-text" IsVisible="{Binding IsSidebarExpanded}">
+                <StackPanel Grid.Column="1" Classes="tile-text" IsVisible="{Binding IsSidebarOpen}">
                   <TextBlock Text="{l:Text Promo.Platinum.Title}" FontWeight="SemiBold" FontSize="{DynamicResource Layout.TileTitleFontSize}" Foreground="{DynamicResource Foreground}" />
                   <TextBlock Text="{l:Text Promo.Platinum.Text}" FontSize="{DynamicResource Layout.TileTextFontSize}" Foreground="{DynamicResource MutedForeground}" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
@@ -297,7 +294,7 @@
 
       <!-- Drag handle on the right edge of the page overview: wider or narrower, thumbnails follow. -->
       <Border x:Name="SidebarSplitter" Grid.Row="0" Grid.Column="0"
-              IsVisible="{Binding ShowThumbnails}"
+              IsVisible="{Binding IsSidebarOpen}"
               HorizontalAlignment="Right"
               Width="{DynamicResource Layout.SidebarSplitterWidth}"
               Margin="{DynamicResource SidebarSplitterMargin}"
@@ -346,15 +343,28 @@
         </ItemsControl>
       </ScrollViewer>
 
-      <TextBlock IsVisible="{Binding IsEmpty}"
-                 Text="{l:Text Viewer.Empty}"
-                 Foreground="{DynamicResource MutedForeground}"
-                 HorizontalAlignment="Center" VerticalAlignment="Center" />
+      <!-- With scan and convert unlocked, any convertible file can be opened or dropped, not only PDFs. -->
+      <Panel IsVisible="{Binding IsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock IsVisible="{Binding Extras.IsLocked, FallbackValue=True}"
+                   Text="{l:Text Viewer.Empty}"
+                   Foreground="{DynamicResource MutedForeground}" />
+        <TextBlock IsVisible="{Binding Extras.IsUnlocked, FallbackValue=False}"
+                   Text="{l:Text Viewer.EmptyUnlocked}"
+                   Foreground="{DynamicResource MutedForeground}" />
+      </Panel>
 
       <StackPanel IsVisible="{Binding IsLoading}" Spacing="{DynamicResource Layout.MessageSpacing}"
                   HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock Text="{l:Text Viewer.Loading}" Foreground="{DynamicResource Foreground}" HorizontalAlignment="Center" />
-        <ProgressBar IsIndeterminate="True" Foreground="{DynamicResource PillBackground}" />
+        <!-- While scanning: a scanner whose light moves across the glass. -->
+        <Panel Classes="scan-animation" IsVisible="{Binding IsScanning}" HorizontalAlignment="Center">
+          <Border Classes="scanner-body">
+            <Border Classes="scanner-glass">
+              <Border Classes="scanner-light" />
+            </Border>
+          </Border>
+        </Panel>
+        <TextBlock Text="{Binding LoadingText}" Foreground="{DynamicResource Foreground}" HorizontalAlignment="Center" />
+        <ProgressBar IsIndeterminate="True" IsVisible="{Binding ShowProgressBar}" Foreground="{DynamicResource PillBackground}" />
       </StackPanel>
 
       <StackPanel IsVisible="{Binding IsError}" Spacing="{DynamicResource Layout.MessageSpacing}" MaxWidth="{DynamicResource Layout.MessageMaxWidth}"
@@ -364,14 +374,26 @@
         <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource MutedForeground}" TextWrapping="Wrap" />
       </StackPanel>
 
+      <!-- Page indicator with the page tools; they act on the marked pages, or on the page shown.
+           Hovering over the arrows shows in the page overview where the pages would go. -->
       <Border IsVisible="{Binding HasPages}"
               HorizontalAlignment="Center" VerticalAlignment="Bottom"
               Margin="{DynamicResource PillMargin}"
               Background="{DynamicResource PillBackground}"
               CornerRadius="{DynamicResource PillCornerRadius}" Padding="{DynamicResource PillPadding}">
-        <TextBlock Text="{Binding Overview.PageIndicator}"
-                   FontSize="{DynamicResource Layout.PillFontSize}"
-                   Foreground="{DynamicResource PillForeground}" />
+        <StackPanel Orientation="Horizontal" Spacing="{DynamicResource Layout.PillToolSpacing}">
+          <TextBlock Text="{Binding Overview.PageIndicator}" VerticalAlignment="Center"
+                     FontSize="{DynamicResource Layout.PillFontSize}"
+                     Foreground="{DynamicResource PillForeground}" />
+          <Border Classes="pill-divider" />
+          <Button Classes="pill-tool" Command="{Binding Overview.RotateLeftCommand}" ToolTip.Tip="{l:Text Pages.RotateLeft}"><PathIcon Data="{StaticResource RotateLeftIcon}" /></Button>
+          <Button Classes="pill-tool" Command="{Binding Overview.RotateRightCommand}" ToolTip.Tip="{l:Text Pages.RotateRight}"><PathIcon Data="{StaticResource RotateRightIcon}" /></Button>
+          <Button Classes="pill-tool" Command="{Binding Overview.DeleteCommand}" IsEnabled="{Binding Overview.CanDelete}" ToolTip.Tip="{l:Text Pages.Delete}"><PathIcon Data="{StaticResource DeleteIcon}" /></Button>
+          <Button Classes="pill-tool" Command="{Binding Overview.MoveUpCommand}" ToolTip.Tip="{l:Text Pages.MoveUp}"
+                  PointerEntered="OnPillMoveUpEntered" PointerExited="OnPillMoveExited"><PathIcon Data="{StaticResource UpIcon}" /></Button>
+          <Button Classes="pill-tool" Command="{Binding Overview.MoveDownCommand}" ToolTip.Tip="{l:Text Pages.MoveDown}"
+                  PointerEntered="OnPillMoveDownEntered" PointerExited="OnPillMoveExited"><PathIcon Data="{StaticResource DownIcon}" /></Button>
+        </StackPanel>
       </Border>
 
       <Button HorizontalAlignment="Right" VerticalAlignment="Bottom"

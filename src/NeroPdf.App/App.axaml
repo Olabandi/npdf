@@ -1,4 +1,5 @@
-<Application xmlns="https://github.com/avaloniaui"
+<Application xmlns:c="using:NeroPdf.App.Controls"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="NeroPdf.App.App"
              RequestedThemeVariant="Light">
@@ -9,8 +10,9 @@
     <Style Selector="Button.header">
       <Setter Property="Foreground" Value="{DynamicResource HeaderButtonForeground}" />
       <Setter Property="Background" Value="Transparent" />
-      <Setter Property="BorderBrush" Value="{DynamicResource HeaderButtonBorder}" />
-      <Setter Property="BorderThickness" Value="1" />
+      <!-- Icon buttons without a frame, like the Windows Photos app; hovering shows a background. -->
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
       <Setter Property="Padding" Value="{DynamicResource HeaderButtonPadding}" />
       <Setter Property="CornerRadius" Value="{DynamicResource HeaderButtonCornerRadius}" />
       <Setter Property="FontSize" Value="{DynamicResource Layout.HeaderButtonFontSize}" />
@@ -33,16 +35,22 @@
     <Style Selector="Button.header:disabled /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Opacity" Value="0.45" />
     </Style>
-    <!-- Covers Scan and Convert while no Nero suite is installed. -->
-    <Style Selector="Button.header.unlock">
-      <Setter Property="Background" Value="{DynamicResource HeaderUnlockBackground}" />
+    <!-- Scan and Convert while no Nero suite is installed: visible, with a gold frame and crown. -->
+    <Style Selector="Button.header.locked">
       <Setter Property="BorderBrush" Value="{DynamicResource HeaderUnlockBorder}" />
-      <Setter Property="Foreground" Value="{DynamicResource HeaderUnlockForeground}" />
     </Style>
-    <Style Selector="Button.header.unlock:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Style Selector="Button.header.locked:pointerover /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Background" Value="{DynamicResource HeaderUnlockHoverBackground}" />
       <Setter Property="BorderBrush" Value="{DynamicResource HeaderUnlockBorder}" />
+    </Style>
+    <!-- Small gold crown in the corner of a locked icon button. -->
+    <Style Selector="PathIcon.lock-badge">
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="VerticalAlignment" Value="Bottom" />
+      <Setter Property="Margin" Value="{DynamicResource LockBadgeMargin}" />
       <Setter Property="Foreground" Value="{DynamicResource HeaderUnlockForeground}" />
+      <Setter Property="Width" Value="{DynamicResource Layout.LockBadgeSize}" />
+      <Setter Property="Height" Value="{DynamicResource Layout.LockBadgeSize}" />
     </Style>
 
     <!-- Dialog buttons -->
@@ -161,6 +169,99 @@
       <Setter Property="RadiusX" Value="4" />
       <Setter Property="RadiusY" Value="4" />
       <Setter Property="Margin" Value="{DynamicResource DropGapFrameMargin}" />
+    </Style>
+
+    <!-- Thumbnail size: from the page overview width, small in the collapsed overview. -->
+    <Style Selector="Border.thumb">
+      <Setter Property="Width" Value="{DynamicResource Layout.ThumbnailWidth}" />
+    </Style>
+    <Style Selector="Border.drag-ghost">
+      <Setter Property="Width" Value="{DynamicResource Layout.ThumbnailWidth}" />
+    </Style>
+    <Style Selector="c|PdfPageView.thumb-page">
+      <Setter Property="MaxPageWidth" Value="{DynamicResource Layout.ThumbnailWidth}" />
+    </Style>
+    <Style Selector="Border.sidebar.collapsed Border.thumb, Border.sidebar.collapsed Border.drag-ghost, Border.sidebar.collapsed Border.drop-gap">
+      <Setter Property="Width" Value="{DynamicResource Layout.CollapsedThumbnailWidth}" />
+    </Style>
+    <Style Selector="Border.sidebar.collapsed c|PdfPageView.thumb-page">
+      <Setter Property="MaxPageWidth" Value="{DynamicResource Layout.CollapsedThumbnailWidth}" />
+    </Style>
+    <Style Selector="Border.sidebar.collapsed Border.drop-gap.open">
+      <Setter Property="Height" Value="{DynamicResource Layout.CollapsedDropGapHeight}" />
+    </Style>
+    <Style Selector="Border.sidebar.collapsed Border.thumb-tools, Border.sidebar.collapsed StackPanel.thumb-item Button.thumb-check">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="Border.sidebar.collapsed StackPanel.thumb-item Border.thumb">
+      <Setter Property="BorderThickness" Value="2" />
+    </Style>
+    <Style Selector="Border.sidebar.collapsed TextBlock.thumb-number">
+      <Setter Property="FontSize" Value="{DynamicResource Layout.CollapsedThumbnailNumberFontSize}" />
+    </Style>
+
+    <!-- Scanning: a flatbed scanner; the light bar moves across the glass and back. -->
+    <Style Selector="Border.scanner-body">
+      <Setter Property="Width" Value="{DynamicResource Layout.ScannerWidth}" />
+      <Setter Property="Height" Value="{DynamicResource Layout.ScannerHeight}" />
+      <Setter Property="CornerRadius" Value="{DynamicResource ScannerCornerRadius}" />
+      <Setter Property="Background" Value="{DynamicResource ScannerBody}" />
+      <Setter Property="Padding" Value="{DynamicResource ScannerPadding}" />
+    </Style>
+    <Style Selector="Border.scanner-glass">
+      <Setter Property="Background" Value="{DynamicResource ScannerGlass}" />
+      <Setter Property="CornerRadius" Value="{DynamicResource ScannerGlassCornerRadius}" />
+      <Setter Property="ClipToBounds" Value="True" />
+    </Style>
+    <Style Selector="Border.scanner-light">
+      <Setter Property="Width" Value="{DynamicResource Layout.ScannerLightWidth}" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="Background" Value="{DynamicResource ScannerLight}" />
+      <Style.Animations>
+        <Animation Duration="0:0:2.4" IterationCount="Infinite" PlaybackDirection="Alternate" Easing="SineEaseInOut">
+          <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.X" Value="0" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <!-- Glass width minus the light: ScannerWidth - 2 × ScannerPadding - ScannerLightWidth (layout.json).
+                 Animations take no resources, so the value is written here. -->
+            <Setter Property="TranslateTransform.X" Value="140" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+    <!-- Page tools next to the page indicator. -->
+    <Style Selector="Button.pill-tool">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="{DynamicResource PillToolPadding}" />
+      <Setter Property="Foreground" Value="{DynamicResource PillForeground}" />
+      <Setter Property="CornerRadius" Value="{DynamicResource PillCornerRadius}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <!-- Tooltip above the bar with some distance: under the pointer it would end the hover
+           (and with it the move preview). -->
+      <Setter Property="ToolTip.Placement" Value="Top" />
+      <Setter Property="ToolTip.VerticalOffset" Value="{DynamicResource Layout.PillToolTipOffset}" />
+    </Style>
+    <Style Selector="Button.pill-tool:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource PillToolHoverBackground}" />
+      <Setter Property="Foreground" Value="{DynamicResource PillForeground}" />
+    </Style>
+    <Style Selector="Button.pill-tool:disabled /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Opacity" Value="0.4" />
+    </Style>
+    <Style Selector="Button.pill-tool PathIcon">
+      <Setter Property="Width" Value="{DynamicResource Layout.PillToolIconSize}" />
+      <Setter Property="Height" Value="{DynamicResource Layout.PillToolIconSize}" />
+    </Style>
+    <Style Selector="Border.pill-divider">
+      <Setter Property="Width" Value="1" />
+      <Setter Property="Height" Value="{DynamicResource Layout.PillToolIconSize}" />
+      <Setter Property="Background" Value="{DynamicResource PillDivider}" />
+      <Setter Property="Margin" Value="6,0,2,0" />
+      <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
     <Style Selector="Border.drag-ghost">

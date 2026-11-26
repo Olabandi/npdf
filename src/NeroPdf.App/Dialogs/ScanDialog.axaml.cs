@@ -42,7 +42,8 @@ public partial class ScanDialog : Window
     private void ShowSources()
     {
         var device = Selected;
-        var both = device is { HasFeeder: true, HasFlatbed: true };
+        ScannerName.Text = device?.Name;
+        var both =device is { HasFeeder: true, HasFlatbed: true };
         SourceGroup.IsVisible = both;
         Feeder.IsChecked = device?.HasFeeder == true;
         Flatbed.IsChecked = device?.HasFeeder != true;

@@ -22,6 +22,11 @@ public static class AppHost
     /// <summary>File given on the command line, if any.</summary>
     internal static string? FileArgument { get; private set; }
 
+    /// <summary>"/forcefree": behave as if no Nero suite were installed (to try the free variant).</summary>
+    internal static bool ForceFree { get; private set; }
+
+    private const string ForceFreeArgument = "/forcefree";
+
     public static int Run(PlatformServices platform, string[] args, Func<AppBuilder> buildApp)
     {
         StartTime.Start();
@@ -35,7 +40,13 @@ public static class AppHost
 
         Texts.Current = Localizer.Load(Path.Combine(AppContext.BaseDirectory, "Languages"),
             CultureInfo.CurrentUICulture, LoggerFactory.CreateLogger<Localizer>());
-        FileArgument = args.FirstOrDefault(a => !a.StartsWith("--", StringComparison.Ordinal));
+        ForceFree = args.Contains(ForceFreeArgument, StringComparer.OrdinalIgnoreCase);
+        if (ForceFree)
+        {
+            logger.LogInformation("Started with {Argument}: scan and convert stay locked", ForceFreeArgument);
+        }
+        FileArgument = args.FirstOrDefault(a => !a.StartsWith("--", StringComparison.Ordinal)
+            && !a.Equals(ForceFreeArgument, StringComparison.OrdinalIgnoreCase));
 
         try
         {

@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using NeroPdf.App.Infrastructure;
 using NeroPdf.App.ViewModels;
 
 namespace NeroPdf.App;
@@ -78,6 +79,30 @@ public partial class MainWindow : Window
         KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.O, command), Command = viewModel.OpenCommand });
         KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.S, command), Command = viewModel.SaveCommand });
         KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.S, command | KeyModifiers.Shift), Command = viewModel.SaveAsCommand });
+
+        // Icon buttons: name and shortcut in the tooltip, e.g. "Speichern (Strg+S)".
+        ToolTip.SetTip(OpenButton, WithShortcut("Header.Open.Tip", Key.O, command));
+        ToolTip.SetTip(SaveAsButton, WithShortcut("Header.SaveAs", Key.S, command | KeyModifiers.Shift));
+        ToolTip.SetTip(SaveButton, WithShortcut("Header.Save", Key.S, command));
+    }
+
+    private static string WithShortcut(string textId, Key key, KeyModifiers modifiers)
+    {
+        var parts = new List<string>();
+        if (modifiers.HasFlag(KeyModifiers.Control))
+        {
+            parts.Add(Texts.Get("Key.Control"));
+        }
+        if (modifiers.HasFlag(KeyModifiers.Meta))
+        {
+            parts.Add(Texts.Get("Key.Command"));
+        }
+        if (modifiers.HasFlag(KeyModifiers.Shift))
+        {
+            parts.Add(Texts.Get("Key.Shift"));
+        }
+        parts.Add(key.ToString());
+        return Texts.Format("Tooltip.WithShortcut", Texts.Get(textId), string.Join("+", parts));
     }
 
     /// <summary>Unsaved printouts and unsaved changes are never closed without asking.</summary>
@@ -97,25 +122,36 @@ public partial class MainWindow : Window
 
     // ---- Files dropped from outside --------------------------------------------------------
 
+    // PDFs are opened; with scan and convert unlocked, other convertible files are converted.
     private void OnDragOver(object? sender, DragEventArgs e)
     {
-        e.DragEffects = FirstPdf(e) is not null ? DragDropEffects.Copy : DragDropEffects.None;
+        e.DragEffects = FirstUsableFile(e) is not null ? DragDropEffects.Copy : DragDropEffects.None;
         e.Handled = true;
     }
 
     private async void OnDrop(object? sender, DragEventArgs e)
     {
-        if (FirstPdf(e) is { } path && ViewModel is { } viewModel)
+        if (FirstUsableFile(e) is not { } path || ViewModel is not { } viewModel)
         {
-            e.Handled = true;
+            return;
+        }
+        e.Handled = true;
+        if (IsPdf(path))
+        {
             await viewModel.OpenFileAsync(path);
+        }
+        else
+        {
+            viewModel.Extras?.ConvertDropped(path);
         }
     }
 
-    private static string? FirstPdf(DragEventArgs e) =>
+    private string? FirstUsableFile(DragEventArgs e) =>
         e.DataTransfer.TryGetFiles()?
             .Select(item => item.TryGetLocalPath())
-            .FirstOrDefault(path => path is not null && path.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase));
+            .FirstOrDefault(path => path is not null && (IsPdf(path) || ViewModel?.Extras?.CanConvert(path) == true));
+
+    private static bool IsPdf(string path) => path.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase);
 
     // ---- Keyboard ---------------------------------------------------------------------------
 
@@ -141,7 +177,7 @@ public partial class MainWindow : Window
             case Key.End:
                 overview.LastPage();
                 break;
-            case Key.Delete when overview.CanDelete:
+            case Key.Delete when overview.SelectedCount > 0 && overview.CanDelete: // only marked pages, never the page shown by accident
                 overview.DeleteCommand.Execute(null);
                 break;
             default:
@@ -295,6 +331,13 @@ public partial class MainWindow : Window
             overview.Toggle(page.Index);
         }
     }
+
+    // Arrows next to the page indicator: show where the pages would go while the pointer is over them.
+    private void OnPillMoveUpEntered(object? sender, PointerEventArgs e) => Overview?.ShowMovePreview(-1);
+
+    private void OnPillMoveDownEntered(object? sender, PointerEventArgs e) => Overview?.ShowMovePreview(1);
+
+    private void OnPillMoveExited(object? sender, PointerEventArgs e) => Overview?.HideMovePreview();
 
     private void OnToolMoveUp(object? sender, RoutedEventArgs e) => Overview?.MoveUpCommand.Execute(null);
 

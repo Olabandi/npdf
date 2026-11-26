@@ -26,7 +26,7 @@ internal static class WindowsPlatform
         IDefaultPdfApp defaultApp = packaged ? new WindowsDefaultPdfApp() : new UnsupportedDefaultPdfApp();
         IFileConverter converter = packaged ? new WindowsFileConverter() : new UnsupportedExtras();
         return new PlatformServices(new WindowsPaths(data), inbox, new HeaderInsets(0, CaptionButtonsWidth), defaultApp,
-            new WindowsNeroSuite(), converter, new WiaScanner());
+            new WindowsNeroSuite(), converter, new WindowsScanner());
     }
 
     private sealed record WindowsPaths(string DataDirectory) : IPlatformPaths;

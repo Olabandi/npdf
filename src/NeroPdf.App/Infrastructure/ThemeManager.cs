@@ -63,6 +63,11 @@ public sealed class ThemeManager
         resources["HeaderButtonsMargin"] = new Thickness(LayoutValue("HeaderButtonsGap"), 0, 0, 0);
         resources["HeaderButtonPadding"] = new Thickness(LayoutValue("HeaderButtonPaddingHorizontal"), LayoutValue("HeaderButtonPaddingVertical"));
         resources["HeaderButtonCornerRadius"] = new CornerRadius(LayoutValue("HeaderButtonCornerRadius"));
+        resources["PillToolPadding"] = new Thickness(LayoutValue("PillToolPadding"));
+        resources["ScannerPadding"] = new Thickness(LayoutValue("ScannerPadding"));
+        resources["ScannerCornerRadius"] = new CornerRadius(LayoutValue("ScannerCornerRadius"));
+        resources["ScannerGlassCornerRadius"] = new CornerRadius(LayoutValue("ScannerGlassCornerRadius"));
+        resources["LockBadgeMargin"] = new Thickness(0, 0, LayoutValue("LockBadgeOffset"), LayoutValue("LockBadgeOffset"));
         resources["DialogPadding"] = new Thickness(LayoutValue("DialogPadding"));
         resources["HintPadding"] = new Thickness(LayoutValue("HintPaddingHorizontal"), LayoutValue("HintPaddingVertical"));
         resources["SidebarPadding"] = new Thickness(LayoutValue("SidebarPadding"));

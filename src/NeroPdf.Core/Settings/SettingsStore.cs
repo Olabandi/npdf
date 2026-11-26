@@ -21,6 +21,12 @@ public sealed class AppSettings
 
     /// <summary>Resolution of scans in dots per inch.</summary>
     public int ScanDpi { get; set; }
+
+    /// <summary>File type filter last used in the Convert dialog ("All", "Images" or "Documents").</summary>
+    public string? ConvertFilter { get; set; }
+
+    /// <summary>Folder last used in the Convert dialog.</summary>
+    public string? ConvertFolder { get; set; }
 }
 
 /// <summary>Loads the defaults, overlays the user's settings file and saves changes.</summary>

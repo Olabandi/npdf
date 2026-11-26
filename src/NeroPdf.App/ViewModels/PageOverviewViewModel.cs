@@ -56,6 +56,7 @@ public sealed class PageOverviewViewModel : ObservableObject
             if (Set(ref _currentPage, value))
             {
                 OnPropertyChanged(nameof(PageIndicator));
+                OnPropertyChanged(nameof(CanDelete));
                 UpdateCurrentMarks();
             }
         }
@@ -72,7 +73,7 @@ public sealed class PageOverviewViewModel : ObservableObject
         : Texts.Format("Pages.SelectedMany", SelectedCount);
 
     /// <summary>Deleting is possible as long as at least one page remains.</summary>
-    public bool CanDelete => SelectedCount > 0 && SelectedCount < Pages.Count;
+    public bool CanDelete => Pages.Count > 0 && TargetIndices().Length < Pages.Count;
 
     public void Load(IPdfDocument document)
     {
@@ -216,54 +217,96 @@ public sealed class PageOverviewViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Shows where "move up" (-1) or "move down" (+1) would put the pages: the same dashed gap and
+    /// dimmed pages as while dragging. Used while the pointer is over the arrows next to the page indicator.
+    /// </summary>
+    public void ShowMovePreview(int step)
+    {
+        var pages = TargetIndices();
+        if (pages.Length == 0 || _busy)
+        {
+            return;
+        }
+        var target = Math.Clamp(pages[0] + step, 0, Pages.Count - pages.Length);
+        if (target == pages[0] && IsContiguous(pages))
+        {
+            return;
+        }
+        // The gap index counts the pages as they are now: the first place where the pages, taken out,
+        // would land at the target.
+        var gap = Enumerable.Range(0, Pages.Count + 1)
+            .First(i => !pages.Contains(i) && i - pages.Count(p => p < i) == target);
+        _dragged = pages;
+        foreach (var page in Pages)
+        {
+            page.IsDragged = pages.Contains(page.Index);
+        }
+        _dropIndex = -1;
+        UpdateDropIndex(gap);
+    }
+
+    /// <summary>Hides the move preview again without moving anything.</summary>
+    public void HideMovePreview()
+    {
+        if (_dragged.Length > 0)
+        {
+            _ = EndDragAsync(drop: false);
+        }
+    }
+
     // ---- Page operations --------------------------------------------------------------------
+
+    // Every operation works on the marked pages, or on the page shown if none is marked.
 
     private async Task RotateAsync(int quarterTurns)
     {
-        var selected = SelectedIndices();
-        if (_document is null || selected.Length == 0)
+        var pages = TargetIndices();
+        if (_document is null || pages.Length == 0)
         {
             return;
         }
         var document = _document;
-        await Task.Run(() => document.RotatePages(selected, quarterTurns));
-        _logger.LogInformation("Rotated {Count} pages by {Turns} quarter turns", selected.Length, quarterTurns);
-        Rebuild(selected, CurrentPage - 1);
+        await Task.Run(() => document.RotatePages(pages, quarterTurns));
+        _logger.LogInformation("Rotated {Count} pages by {Turns} quarter turns", pages.Length, quarterTurns);
+        Rebuild(SelectedIndices(), CurrentPage - 1);
         DocumentChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private async Task DeleteAsync()
     {
-        var selected = SelectedIndices();
+        var pages = TargetIndices();
+        var hadSelection = SelectedCount > 0;
         if (_document is null || !CanDelete)
         {
             return;
         }
         var document = _document;
-        await Task.Run(() => document.DeletePages(selected));
-        _logger.LogInformation("Deleted {Count} pages", selected.Length);
-        var first = Math.Min(selected[0], document.PageCount - 1);
-        Rebuild([first], first);
+        await Task.Run(() => document.DeletePages(pages));
+        _logger.LogInformation("Deleted {Count} pages", pages.Length);
+        var first = Math.Min(pages[0], document.PageCount - 1);
+        Rebuild(hadSelection ? [first] : [], first);
         DocumentChanged?.Invoke(this, EventArgs.Empty);
         GoToPage(first);
     }
 
     private async Task MoveByAsync(int step)
     {
-        var selected = SelectedIndices();
-        if (selected.Length == 0)
+        HideMovePreview();
+        var pages = TargetIndices();
+        if (pages.Length == 0)
         {
             return;
         }
-        var target = Math.Clamp(selected[0] + step, 0, Pages.Count - selected.Length);
-        if (target == selected[0] && IsContiguous(selected))
+        var target = Math.Clamp(pages[0] + step, 0, Pages.Count - pages.Length);
+        if (target == pages[0] && IsContiguous(pages))
         {
             return;
         }
-        await MoveToAsync(selected, target);
+        await MoveToAsync(pages, target, keepMarked: SelectedCount > 0);
     }
 
-    private async Task MoveToAsync(int[] pages, int target)
+    private async Task MoveToAsync(int[] pages, int target, bool keepMarked = true)
     {
         if (_document is null || pages.Length == 0)
         {
@@ -278,7 +321,7 @@ public sealed class PageOverviewViewModel : ObservableObject
         await Task.Run(() => document.MovePages(pages, target));
         _logger.LogInformation("Moved {Count} pages to position {Target}", pages.Length, target + 1);
         var moved = Enumerable.Range(target, pages.Length).ToArray();
-        Rebuild(moved, target);
+        Rebuild(keepMarked ? moved : [], target);
         DocumentChanged?.Invoke(this, EventArgs.Empty);
         GoToPage(target);
     }
@@ -334,6 +377,13 @@ public sealed class PageOverviewViewModel : ObservableObject
     }
 
     private int[] SelectedIndices() => Pages.Where(p => p.IsSelected).Select(p => p.Index).ToArray();
+
+    /// <summary>The marked pages, or the page shown if none is marked.</summary>
+    private int[] TargetIndices()
+    {
+        var selected = SelectedIndices();
+        return selected.Length > 0 || Pages.Count == 0 ? selected : [Math.Clamp(CurrentPage - 1, 0, Pages.Count - 1)];
+    }
 
     private int LastSelectedIndex() => Pages.LastOrDefault(p => p.IsSelected)?.Index ?? -1;
 

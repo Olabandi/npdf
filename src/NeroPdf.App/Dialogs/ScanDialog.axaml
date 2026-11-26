@@ -16,6 +16,12 @@
                FontWeight="SemiBold"
                FontSize="{DynamicResource Layout.DialogTitleFontSize}"
                Foreground="{DynamicResource Foreground}" />
+    <!-- Name of the selected scanner, right under the heading. -->
+    <TextBlock x:Name="ScannerName"
+               Margin="0,-8,0,0"
+               FontWeight="SemiBold"
+               Foreground="{DynamicResource MutedForeground}"
+               TextWrapping="Wrap" />
 
     <StackPanel x:Name="ScannerGroup" Spacing="4">
       <TextBlock Text="{l:Text Scan.Scanner}" Foreground="{DynamicResource MutedForeground}" />

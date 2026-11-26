@@ -79,8 +79,10 @@ public partial class App : Application
             loggers.CreateLogger<PromoLinksViewModel>());
         viewModel.PromoLinks = promoLinks;
 
-        var extras = new ExtrasViewModel(viewModel, platform.NeroSuite, platform.Converter, platform.Scanner,
-            platform.PrintInbox, engine, settings.ScanDpi, promoLinks.OpenNeroPlatinumCommand,
+        // "/forcefree" shows the free variant even where a Nero suite is installed.
+        INeroSuite suite = AppHost.ForceFree ? new UnsupportedExtras() : platform.NeroSuite;
+        var extras = new ExtrasViewModel(viewModel, suite, platform.Converter, platform.Scanner,
+            platform.PrintInbox, engine, settings, () => settingsStore.Save(settings), promoLinks.OpenNeroPlatinumCommand,
             loggers.CreateLogger<ExtrasViewModel>());
         viewModel.Extras = extras;
 

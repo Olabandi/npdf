@@ -3,12 +3,13 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
   xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   xmlns:printsupport="http://schemas.microsoft.com/appx/manifest/printsupport/windows10"
   xmlns:printsupport2="http://schemas.microsoft.com/appx/manifest/printsupport/windows10/2"
-  IgnorableNamespaces="uap uap10 desktop rescap printsupport printsupport2">
+  IgnorableNamespaces="uap uap3 uap10 desktop rescap printsupport printsupport2">
 
   <Identity Name="__NAME__" Publisher="__PUBLISHER__" Version="__VERSION__" ProcessorArchitecture="x64" />
 
@@ -49,6 +50,12 @@ __RESOURCES__
             </printsupport2:SupportedFormats>
           </printsupport2:PrintSupportVirtualPrinter>
         </printsupport2:Extension>
+        <!-- "NeroPdf" can be started from the command line or Win+R, also with parameters (e.g. /forcefree). -->
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="NeroPdf.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="NeroPdf.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
         <desktop:Extension Category="windows.fullTrustProcess" Executable="NeroPdf.exe">
           <desktop:FullTrustProcess>
             <desktop:ParameterGroup GroupId="Print" Parameters="" />

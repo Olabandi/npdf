@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using NeroPdf.App.Infrastructure;
 using NeroPdf.Core.Pdf;
 using NeroPdf.Core.Platform;
+using NeroPdf.Core.Settings;
 
 namespace NeroPdf.App.ViewModels;
 
@@ -19,12 +20,16 @@ public sealed class ExtrasViewModel : ObservableObject
     private readonly IPrintInbox _inbox;
     private readonly IPdfEngine _engine;
     private readonly int _scanDpi;
+    private readonly AppSettings _settings;
+    private readonly Action _saveSettings;
+    private ConvertibleTypes _types = ConvertibleTypes.None;
     private readonly ILogger<ExtrasViewModel> _logger;
     private bool _isUnlocked;
     private bool _checked;
 
     public ExtrasViewModel(MainViewModel main, INeroSuite suite, IFileConverter converter, IScanner scanner,
-        IPrintInbox inbox, IPdfEngine engine, int scanDpi, ICommand unlockCommand, ILogger<ExtrasViewModel> logger)
+        IPrintInbox inbox, IPdfEngine engine, AppSettings settings, Action saveSettings, ICommand unlockCommand,
+        ILogger<ExtrasViewModel> logger)
     {
         _main = main;
         _suite = suite;
@@ -32,11 +37,29 @@ public sealed class ExtrasViewModel : ObservableObject
         _scanner = scanner;
         _inbox = inbox;
         _engine = engine;
-        _scanDpi = scanDpi;
+        _settings = settings;
+        _saveSettings = saveSettings;
+        _scanDpi = settings.ScanDpi > 0 ? settings.ScanDpi : DefaultScanDpi;
         _logger = logger;
         UnlockCommand = unlockCommand;
-        ScanCommand = new RelayCommand(() => _main.Run(ScanAsync));
-        ConvertCommand = new RelayCommand(() => _main.Run(ConvertAsync));
+        // Locked, both buttons lead to the Nero Platinum page.
+        ScanCommand = new RelayCommand(() => RunOrOfferUnlock(ScanAsync));
+        ConvertCommand = new RelayCommand(() => RunOrOfferUnlock(ConvertAsync));
+    }
+
+    private const int DefaultScanDpi = 300;
+
+    private void RunOrOfferUnlock(Func<Task> action)
+    {
+        if (IsUnlocked)
+        {
+            _main.Run(action);
+        }
+        else
+        {
+            _logger.LogInformation("Locked function clicked, Nero Platinum page offered");
+            UnlockCommand.Execute(null);
+        }
     }
 
     public ICommand ScanCommand { get; }
@@ -72,6 +95,12 @@ public sealed class ExtrasViewModel : ObservableObject
                 _logger.LogInformation("Scan and convert {State}", installed ? "unlocked" : "locked");
             }
             IsUnlocked = installed;
+            if (installed && _converter.IsSupported && _types == ConvertibleTypes.None)
+            {
+                // Needed for drag and drop; reading the file associations takes a moment.
+                _types = await Task.Run(_converter.GetConvertibleTypes);
+                _logger.LogDebug("{Images} image and {Documents} document types can be converted", _types.Images.Count, _types.Documents.Count);
+            }
         }
         catch (Exception ex)
         {
@@ -91,10 +120,28 @@ public sealed class ExtrasViewModel : ObservableObject
             await dialogs.ShowMessageAsync(Texts.Get("Convert.Failed.Title"), Texts.Get("Convert.NoPrinter"));
             return;
         }
-        var extensions = await Task.Run(_converter.GetConvertibleExtensions);
-        _logger.LogDebug("{Count} convertible file types", extensions.Count);
-        var path = await dialogs.PickFileToConvertAsync(extensions);
-        if (path is null)
+        _types = await Task.Run(_converter.GetConvertibleTypes);
+        var pick = await dialogs.PickFileToConvertAsync(_types, _settings.ConvertFilter, _settings.ConvertFolder);
+        if (pick is null)
+        {
+            return;
+        }
+        _settings.ConvertFilter = pick.Filter;
+        _settings.ConvertFolder = Path.GetDirectoryName(pick.Path);
+        _saveSettings();
+        await ConvertFileAsync(pick.Path);
+    }
+
+    /// <summary>True for files that can be converted (used for drag and drop); always false while locked.</summary>
+    public bool CanConvert(string path) => IsUnlocked && _types.Contains(path);
+
+    /// <summary>Converts a file dropped onto the window.</summary>
+    public void ConvertDropped(string path) => _main.Run(() => ConvertFileAsync(path));
+
+    private async Task ConvertFileAsync(string path)
+    {
+        var dialogs = _main.Dialogs;
+        if (!IsUnlocked || dialogs is null)
         {
             return;
         }
@@ -147,7 +194,7 @@ public sealed class ExtrasViewModel : ObservableObject
             return;
         }
         var settings = new ScanSettings(request.Source, request.Color, _scanDpi);
-        await _main.CreateDocumentAsync(Texts.Get("Scan.Progress"), () => ScanPagesAsync(request.Device, settings));
+        await _main.CreateDocumentAsync(Texts.Get("Scan.Progress"), () => ScanPagesAsync(request.Device, settings), scanning: true);
     }
 
     /// <summary>Scans until the user is done and returns the new PDF, or null if nothing was scanned.</summary>
@@ -163,12 +210,31 @@ public sealed class ExtrasViewModel : ObservableObject
                 try
                 {
                     var batchFolder = Path.Combine(folder, (pages.Count + 1).ToString("D4"));
-                    var batch = await Task.Run(() => _scanner.Scan(device, settings, batchFolder));
+                    var before = pages.Count;
+                    _main.LoadingText = ScanningText(before);
+                    // Created here, so the reports arrive on the user interface thread.
+                    var progress = new Progress<int>(count => _main.LoadingText = ScanningText(before + count));
+                    var batch = await Task.Run(() => _scanner.Scan(device, settings, batchFolder, progress));
                     pages.AddRange(batch);
                     _logger.LogInformation("Scanned {Count} pages ({Source}, {Color})", batch.Count, settings.Source, settings.Color);
                 }
+                catch (ScanException ex) when (ex.Error == ScanError.Busy)
+                {
+                    // Keep what the feeder already delivered; "Try again" continues with the next sheets.
+                    pages.AddRange(ex.Pages);
+                    _logger.LogWarning("Scanner busy after {Pages} pages", pages.Count);
+                    if (await dialogs.AskRetryAsync(Texts.Get("Scan.Failed.Title"), Texts.Get("Scan.Failed.Busy")))
+                    {
+                        continue;
+                    }
+                    if (pages.Count == 0)
+                    {
+                        return null;
+                    }
+                }
                 catch (ScanException ex)
                 {
+                    pages.AddRange(ex.Pages);
                     _logger.LogWarning(ex, "Scan failed: {Error}", ex.Error);
                     var textId = ex.Error switch
                     {
@@ -216,6 +282,9 @@ public sealed class ExtrasViewModel : ObservableObject
             return null;
         }
     }
+
+    private static string ScanningText(int pages) =>
+        pages > 0 ? Texts.Format("Scan.ProgressPages", pages) : Texts.Get("Scan.Progress");
 
     private static string NewWorkFolder(string kind) =>
         Path.Combine(Path.GetTempPath(), "NeroPdf", kind + "-" + Guid.NewGuid().ToString("N"));

@@ -14,6 +14,7 @@ Benutzen
 - Oeffnen: Nero PDF im Startmenue starten, dann "Oeffnen" (Strg+O) oder eine PDF-Datei ins Fenster ziehen.
   Nero PDF steht auch bei "Oeffnen mit" fuer PDF-Dateien zur Verfuegung.
 - Seiten: links markieren, drehen, verschieben (auch per Ziehen) und loeschen, danach "Speichern".
+- Die Knoepfe oben zeigen nur Icons, Name und Tastenkuerzel stehen im Tooltip.
 - Scannen und Konvertieren (nur wenn Nero Start oder Nero Platinum installiert ist):
   "Scannen ..." scannt direkt als PDF, "Konvertieren ..." macht aus Bildern, Text- und
   Office-Dateien ein PDF.

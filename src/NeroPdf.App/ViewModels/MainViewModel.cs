@@ -40,6 +40,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private bool _isDark;
     private bool _isSidebarExpanded = true;
     private string _loadingText = Texts.Get("Viewer.Loading");
+    private bool _isScanning;
 
     public MainViewModel(IPdfEngine engine, DocumentSaver saver, PageOverviewViewModel overview, bool isDark,
         Action<bool> applyDarkTheme, TimeSpan progressDelay, ILogger<MainViewModel> logger)
@@ -98,13 +99,21 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         {
             if (Set(ref _isSidebarExpanded, value))
             {
+                OnPropertyChanged(nameof(IsSidebarOpen));
                 OnPropertyChanged(nameof(ShowThumbnails));
                 OnPropertyChanged(nameof(SidebarToggleTooltip));
             }
         }
     }
 
-    public bool ShowThumbnails => HasPages && IsSidebarExpanded;
+    /// <summary>Thumbnails are shown whenever there is a document: large when open, small when collapsed.</summary>
+    public bool ShowThumbnails => HasPages;
+
+    /// <summary>
+    /// The page overview as shown: without a document it is always collapsed (only the product tiles
+    /// remain); with one it shows the state the user chose last (<see cref="IsSidebarExpanded"/>).
+    /// </summary>
+    public bool IsSidebarOpen => HasPages && IsSidebarExpanded;
 
     public string SidebarToggleTooltip => Texts.Get(IsSidebarExpanded ? "Sidebar.Collapse" : "Sidebar.Expand");
 
@@ -120,6 +129,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
                 OnPropertyChanged(nameof(HasPages));
                 OnPropertyChanged(nameof(IsError));
                 OnPropertyChanged(nameof(ShowThumbnails));
+                OnPropertyChanged(nameof(IsSidebarOpen));
                 OnDocumentStateChanged();
             }
         }
@@ -129,8 +139,23 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public string LoadingText
     {
         get => _loadingText;
-        private set => Set(ref _loadingText, value);
+        set => Set(ref _loadingText, value);
     }
+
+    /// <summary>While scanning, an animated scanner is shown instead of the progress bar.</summary>
+    public bool IsScanning
+    {
+        get => _isScanning;
+        private set
+        {
+            if (Set(ref _isScanning, value))
+            {
+                OnPropertyChanged(nameof(ShowProgressBar));
+            }
+        }
+    }
+
+    public bool ShowProgressBar => !IsScanning;
 
     public bool IsEmpty => State == ViewState.Empty;
 
@@ -244,7 +269,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     /// Creates a new document (a scan) after confirming unsaved changes and shows it like a printed one:
     /// temporary until saved. <paramref name="create"/> returns the file, or null if nothing was created.
     /// </summary>
-    public async Task CreateDocumentAsync(string progressText, Func<Task<string?>> create)
+    public async Task CreateDocumentAsync(string progressText, Func<Task<string?>> create, bool scanning = false)
     {
         if (!await ConfirmCloseAsync())
         {
@@ -252,6 +277,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
         CloseDocument();
         LoadingText = progressText;
+        IsScanning = scanning;
         State = ViewState.Loading;
         string? path = null;
         try
@@ -261,6 +287,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         finally
         {
             LoadingText = Texts.Get("Viewer.Loading");
+            IsScanning = false;
             if (path is null)
             {
                 State = ViewState.Empty;

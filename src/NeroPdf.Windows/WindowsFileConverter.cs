@@ -35,11 +35,11 @@ internal sealed class WindowsFileConverter : IFileConverter
     private static readonly HashSet<string> Excluded = new(StringComparer.OrdinalIgnoreCase) { "pdf" };
 
     private readonly string _portPrefix = global::Windows.ApplicationModel.Package.Current.Id.FamilyName + "_";
-    private IReadOnlyList<string>? _extensions;
+    private ConvertibleTypes? _types;
 
     public bool IsSupported => true;
 
-    public IReadOnlyList<string> GetConvertibleExtensions() => _extensions ??= FindConvertibleExtensions();
+    public ConvertibleTypes GetConvertibleTypes() => _types ??= FindConvertibleTypes();
 
     public ConvertOutcome Convert(string path, string folder)
     {
@@ -95,17 +95,18 @@ internal sealed class WindowsFileConverter : IFileConverter
         return (int)Math.Ceiling(dpi);
     }
 
-    private static List<string> FindConvertibleExtensions()
+    private static ConvertibleTypes FindConvertibleTypes()
     {
-        var result = new HashSet<string>(ImageExtensions.Concat(TextExtensions), StringComparer.Ordinal);
+        var documents = new HashSet<string>(TextExtensions, StringComparer.Ordinal);
         foreach (var name in Registry.ClassesRoot.GetSubKeyNames())
         {
-            if (name.Length > 1 && name[0] == '.' && !Excluded.Contains(name[1..]) && HasPrintToCommand(name))
+            if (name.Length > 1 && name[0] == '.' && !Excluded.Contains(name[1..]) && !ImageExtensions.Contains(name[1..])
+                && HasPrintToCommand(name))
             {
-                result.Add(name[1..].ToLowerInvariant());
+                documents.Add(name[1..].ToLowerInvariant());
             }
         }
-        return result.Order(StringComparer.Ordinal).ToList();
+        return new ConvertibleTypes(ImageExtensions.Order(StringComparer.Ordinal).ToList(), documents.Order(StringComparer.Ordinal).ToList());
     }
 
     private static bool HasPrintToCommand(string extension)

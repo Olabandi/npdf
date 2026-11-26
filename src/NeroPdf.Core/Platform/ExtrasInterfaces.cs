@@ -18,8 +18,8 @@ public interface IFileConverter
     /// <summary>False where the platform cannot do it (no virtual printer, e.g. development build or macOS).</summary>
     bool IsSupported { get; }
 
-    /// <summary>Extensions (without dot, lower case) of the file types that can be converted.</summary>
-    IReadOnlyList<string> GetConvertibleExtensions();
+    /// <summary>The file types that can be converted. May take a moment (reads the system's file associations).</summary>
+    ConvertibleTypes GetConvertibleTypes();
 
     /// <summary>
     /// Images: written as JPEG pages into <paramref name="folder"/>; the app makes the PDF.
@@ -27,6 +27,20 @@ public interface IFileConverter
     /// printer; the result arrives like any other print job (this does not wait for it).
     /// </summary>
     ConvertOutcome Convert(string path, string folder);
+}
+
+/// <summary>Extensions (without dot, lower case) of convertible files: images and other documents.</summary>
+public sealed record ConvertibleTypes(IReadOnlyList<string> Images, IReadOnlyList<string> Documents)
+{
+    public static ConvertibleTypes None { get; } = new([], []);
+
+    public IEnumerable<string> All => Images.Concat(Documents);
+
+    public bool Contains(string path)
+    {
+        var extension = Path.GetExtension(path).TrimStart('.');
+        return extension.Length > 0 && All.Contains(extension, StringComparer.OrdinalIgnoreCase);
+    }
 }
 
 public enum ConvertResult
@@ -52,8 +66,9 @@ public interface IScanner
     /// Scans from the document feeder all sheets, from the flatbed one page, and writes one JPEG file
     /// per page into <paramref name="folder"/>.
     /// </summary>
+    /// <param name="progress">Receives the number of pages scanned so far, where the scanner reports it.</param>
     /// <exception cref="ScanException">The scanner reported an error.</exception>
-    IReadOnlyList<ScannedImage> Scan(ScannerDevice device, ScanSettings settings, string folder);
+    IReadOnlyList<ScannedImage> Scan(ScannerDevice device, ScanSettings settings, string folder, IProgress<int>? progress = null);
 }
 
 public sealed record ScannerDevice(string Id, string Name, bool HasFeeder, bool HasFlatbed);
@@ -80,11 +95,18 @@ public enum ScanError
     Failed,
     NoPaper,
     Offline,
+
+    /// <summary>The scanner stayed busy or stopped responding; the user can try again.</summary>
+    Busy,
 }
 
-public sealed class ScanException(ScanError error, string message, Exception? inner = null) : Exception(message, inner)
+public sealed class ScanException(ScanError error, string message, Exception? inner = null,
+    IReadOnlyList<ScannedImage>? pages = null) : Exception(message, inner)
 {
     public ScanError Error { get; } = error;
+
+    /// <summary>Pages scanned before the error (e.g. the first sheets of the feeder); they are kept.</summary>
+    public IReadOnlyList<ScannedImage> Pages { get; } = pages ?? [];
 }
 
 /// <summary>Used where scanning and converting are not available (e.g. macOS for now).</summary>
@@ -94,12 +116,12 @@ public sealed class UnsupportedExtras : INeroSuite, IFileConverter, IScanner
 
     public bool IsInstalled() => false;
 
-    public IReadOnlyList<string> GetConvertibleExtensions() => [];
+    public ConvertibleTypes GetConvertibleTypes() => ConvertibleTypes.None;
 
     public ConvertOutcome Convert(string path, string folder) => new(ConvertResult.NoPrinter);
 
     public IReadOnlyList<ScannerDevice> GetDevices() => [];
 
-    public IReadOnlyList<ScannedImage> Scan(ScannerDevice device, ScanSettings settings, string folder) =>
+    public IReadOnlyList<ScannedImage> Scan(ScannerDevice device, ScanSettings settings, string folder, IProgress<int>? progress = null) =>
         throw new ScanException(ScanError.Offline, "Scanning is not available on this platform.");
 }
