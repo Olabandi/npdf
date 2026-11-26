@@ -33,7 +33,6 @@ if (-not $Version) {
     # The locally installed version counts too, so a new build never downgrades the installation.
     $installed = Get-AppxPackage -Name NeroPdf -ErrorAction SilentlyContinue | ForEach-Object { [version]$_.Version }
     $last = @($last, $installed) | Where-Object { $_ } | Sort-Object | Select-Object -Last 1
-    if (-not $last) { $last = [version]"0.4.0.0" }| Select-Object -Last 1
     if (-not $last) { $last = [version]"0.4.0.0" }
     $Version = "{0}.{1}.{2}.{3}" -f $last.Major, $last.Minor, $last.Build, ($last.Revision + 1)
 }
