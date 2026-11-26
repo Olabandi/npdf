@@ -1,0 +1,50 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="using:NeroPdf.App.Infrastructure"
+        x:Class="NeroPdf.App.Dialogs.ImagePageDialog"
+        Title="{l:Text ImagePage.Title}"
+        SizeToContent="WidthAndHeight"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        MinWidth="{DynamicResource Layout.DialogMinWidth}"
+        MaxWidth="{DynamicResource Layout.DialogMaxWidth}"
+        Background="{DynamicResource DialogBackground}">
+  <!-- Converting images: page in image size, or A4 portrait / landscape with the image centred and scaled. -->
+  <StackPanel Margin="{DynamicResource DialogPadding}" Spacing="{DynamicResource Layout.DialogSpacing}">
+    <TextBlock Text="{l:Text ImagePage.Title}"
+               FontWeight="SemiBold"
+               FontSize="{DynamicResource Layout.DialogTitleFontSize}"
+               Foreground="{DynamicResource Foreground}" />
+    <TextBlock x:Name="FileName" Margin="0,-8,0,0" FontWeight="SemiBold"
+               Foreground="{DynamicResource MutedForeground}" TextTrimming="CharacterEllipsis" />
+
+    <!-- Preview: the page (white) with the image as it will be placed. -->
+    <Border Classes="image-preview-area">
+      <Border x:Name="PreviewPage" Classes="image-preview-page">
+        <Image x:Name="PreviewImage" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Border>
+    </Border>
+
+    <StackPanel Spacing="4">
+      <TextBlock Text="{l:Text ImagePage.Format}" Foreground="{DynamicResource MutedForeground}" />
+      <RadioButton x:Name="OriginalOption" GroupName="Format" Content="{l:Text ImagePage.Original}" Foreground="{DynamicResource Foreground}" />
+      <RadioButton x:Name="PortraitOption" GroupName="Format" Content="{l:Text ImagePage.A4Portrait}" Foreground="{DynamicResource Foreground}" />
+      <RadioButton x:Name="LandscapeOption" GroupName="Format" Content="{l:Text ImagePage.A4Landscape}" Foreground="{DynamicResource Foreground}" />
+    </StackPanel>
+
+    <StackPanel x:Name="ZoomGroup" Spacing="4">
+      <TextBlock Text="{l:Text ImagePage.Zoom}" Foreground="{DynamicResource MutedForeground}" />
+      <Grid ColumnDefinitions="*,Auto">
+        <Slider x:Name="Zoom" Minimum="10" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" />
+        <TextBlock x:Name="ZoomText" Grid.Column="1" MinWidth="44" TextAlignment="Right" VerticalAlignment="Center"
+                   Foreground="{DynamicResource Foreground}" />
+      </Grid>
+    </StackPanel>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="{DynamicResource Layout.DialogButtonSpacing}">
+      <Button x:Name="Start" Classes="dialog-primary" IsDefault="True" Content="{l:Text ImagePage.Convert}" />
+      <Button x:Name="Cancel" Classes="dialog-secondary" IsCancel="True" Content="{l:Text Common.Cancel}" />
+    </StackPanel>
+  </StackPanel>
+</Window>

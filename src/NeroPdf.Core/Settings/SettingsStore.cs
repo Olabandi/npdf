@@ -27,6 +27,12 @@ public sealed class AppSettings
 
     /// <summary>Folder last used in the Convert dialog.</summary>
     public string? ConvertFolder { get; set; }
+
+    /// <summary>Converted images: "Original" (page = image size), "A4Portrait" or "A4Landscape".</summary>
+    public string? ImagePageFormat { get; set; }
+
+    /// <summary>Converted images on A4: size in percent of the largest that fits (10 to 100).</summary>
+    public int ImageZoom { get; set; }
 }
 
 /// <summary>Loads the defaults, overlays the user's settings file and saves changes.</summary>

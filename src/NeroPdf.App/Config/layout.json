@@ -17,6 +17,8 @@
   "MessageMaxWidth": 520,
   "MessageTitleFontSize": 16,
   "MessageSpacing": 8,
+  "ImagePreviewSize": 200,
+  "ImagePreviewAreaSize": 224,
   "ScannerWidth": 168,
   "ScannerHeight": 96,
   "ScannerPadding": 10,

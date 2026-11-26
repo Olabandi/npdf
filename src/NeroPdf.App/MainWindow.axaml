@@ -72,10 +72,12 @@
                 Height="{DynamicResource Layout.FileNameDividerHeight}"
                 BorderThickness="1,0,0,0"
                 BorderBrush="{DynamicResource HeaderDivider}">
+          <!-- Full path; when it is too long, middle folders give way so the file name stays readable. -->
           <TextBlock Text="{Binding DocumentName}"
+                     ToolTip.Tip="{Binding DocumentName}"
                      FontSize="{DynamicResource Layout.FileNameFontSize}"
                      Foreground="{DynamicResource HeaderMutedForeground}"
-                     TextTrimming="CharacterEllipsis"
+                     TextTrimming="PathSegmentEllipsis"
                      VerticalAlignment="Center" />
         </Border>
         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"

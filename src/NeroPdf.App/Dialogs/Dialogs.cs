@@ -44,6 +44,9 @@ public interface IDialogs
     /// <summary>A problem the user may retry: true for "Try again", false for "OK".</summary>
     Task<bool> AskRetryAsync(string title, string text);
 
+    /// <summary>Converting an image (with preview): page format and size; null if cancelled.</summary>
+    Task<ImagePageChoice?> AskImagePageAsync(string filePath, ImagePageChoice last);
+
     /// <summary>After a flatbed page: true to scan another page, false when done.</summary>
     Task<bool> AskScanAnotherPageAsync(int pagesSoFar);
 }
@@ -150,6 +153,9 @@ public sealed class Dialogs(Window owner) : IDialogs
 
     public Task<ScanRequest?> AskScanSettingsAsync(IReadOnlyList<ScannerDevice> devices) =>
         new ScanDialog(devices).ShowDialog<ScanRequest?>(owner);
+
+    public Task<ImagePageChoice?> AskImagePageAsync(string filePath, ImagePageChoice last) =>
+        new ImagePageDialog(filePath, last).ShowDialog<ImagePageChoice?>(owner);
 
     public async Task<bool> AskRetryAsync(string title, string text)
     {

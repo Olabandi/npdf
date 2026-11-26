@@ -155,6 +155,6 @@ internal sealed class WindowsScanner : IScanner
             return [new ScannedImage(file, dpi)];
         }
         var pageFolder = Path.Combine(folder, $"converted-{pagesSoFar + 1:D4}");
-        return WiaImages.OnStaThread(() => WiaImages.SaveFramesAsJpeg(file, pageFolder, (_, _) => dpi));
+        return ImagePages.SaveAsJpeg(file, pageFolder, (_, _) => dpi);
     }
 }

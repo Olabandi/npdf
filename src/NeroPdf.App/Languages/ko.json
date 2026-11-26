@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Shift",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0} ({1})"
+  "Tooltip.WithShortcut": "{0} ({1})",
+  "ImagePage.Title": "이미지 변환",
+  "ImagePage.Format": "페이지",
+  "ImagePage.Original": "원본 크기",
+  "ImagePage.A4Portrait": "A4 세로",
+  "ImagePage.A4Landscape": "A4 가로",
+  "ImagePage.Zoom": "페이지에서의 크기",
+  "ImagePage.Convert": "변환"
 }

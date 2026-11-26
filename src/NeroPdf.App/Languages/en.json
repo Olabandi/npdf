@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Shift",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0} ({1})"
+  "Tooltip.WithShortcut": "{0} ({1})",
+  "ImagePage.Title": "Convert image",
+  "ImagePage.Format": "Page",
+  "ImagePage.Original": "Original size",
+  "ImagePage.A4Portrait": "A4 portrait",
+  "ImagePage.A4Landscape": "A4 landscape",
+  "ImagePage.Zoom": "Size on the page",
+  "ImagePage.Convert": "Convert"
 }

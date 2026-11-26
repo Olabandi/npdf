@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Shift",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0} ({1})"
+  "Tooltip.WithShortcut": "{0} ({1})",
+  "ImagePage.Title": "Преобразовать изображение",
+  "ImagePage.Format": "Страница",
+  "ImagePage.Original": "Исходный размер",
+  "ImagePage.A4Portrait": "A4 книжная",
+  "ImagePage.A4Landscape": "A4 альбомная",
+  "ImagePage.Zoom": "Размер на странице",
+  "ImagePage.Convert": "Преобразовать"
 }

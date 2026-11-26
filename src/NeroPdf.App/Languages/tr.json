@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Shift",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0} ({1})"
+  "Tooltip.WithShortcut": "{0} ({1})",
+  "ImagePage.Title": "Resmi dönüştür",
+  "ImagePage.Format": "Sayfa",
+  "ImagePage.Original": "Orijinal boyut",
+  "ImagePage.A4Portrait": "A4 dikey",
+  "ImagePage.A4Landscape": "A4 yatay",
+  "ImagePage.Zoom": "Sayfadaki boyut",
+  "ImagePage.Convert": "Dönüştür"
 }

@@ -145,15 +145,34 @@ public sealed class ExtrasViewModel : ObservableObject
         {
             return;
         }
+        // Images: ask how they go on the page (and remember it).
+        PdfPageLayout? layout = null;
+        if (_types.Images.Contains(Path.GetExtension(path).TrimStart('.'), StringComparer.OrdinalIgnoreCase))
+        {
+            var choice = await dialogs.AskImagePageAsync(path, LastImagePageChoice());
+            if (choice is null)
+            {
+                return;
+            }
+            _settings.ImagePageFormat = choice.Format.ToString();
+            _settings.ImageZoom = choice.ZoomPercent;
+            _saveSettings();
+            layout = choice.ToLayout();
+        }
         var folder = NewWorkFolder("Convert");
         try
         {
+            if (layout is null)
+            {
+                // Documents arrive through the printer in a new window, which then shows this path.
+                _inbox.RegisterConversion(path);
+            }
             var outcome = await Task.Run(() => _converter.Convert(path, folder));
             _logger.LogInformation("Convert ({Extension}): {Result}", Path.GetExtension(path), outcome.Result);
             if (outcome is { Result: ConvertResult.Pages, Pages.Count: > 0 })
             {
                 var title = Path.GetFileNameWithoutExtension(path);
-                await _main.CreateDocumentAsync(Texts.Get("Viewer.Loading"), () => CreatePdfAsync(outcome.Pages, title));
+                await _main.CreateDocumentAsync(Texts.Get("Viewer.Loading"), () => CreatePdfAsync(outcome.Pages, title, layout), origin: path);
                 return;
             }
             var textId = outcome.Result switch
@@ -267,12 +286,12 @@ public sealed class ExtrasViewModel : ObservableObject
     }
 
     /// <summary>Makes the PDF from image pages; it is treated like a printed document. Null on failure (after a message).</summary>
-    private async Task<string?> CreatePdfAsync(IReadOnlyList<ScannedImage> pages, string title)
+    private async Task<string?> CreatePdfAsync(IReadOnlyList<ScannedImage> pages, string title, PdfPageLayout? layout = null)
     {
         var target = _inbox.CreateDocumentPath(title);
         try
         {
-            await Task.Run(() => WritePdf(pages, target));
+            await Task.Run(() => WritePdf(pages, target, layout));
             return target;
         }
         catch (Exception ex) when (ex is IOException or InvalidDataException or InvalidOperationException or UnauthorizedAccessException)
@@ -289,7 +308,11 @@ public sealed class ExtrasViewModel : ObservableObject
     private static string NewWorkFolder(string kind) =>
         Path.Combine(Path.GetTempPath(), "NeroPdf", kind + "-" + Guid.NewGuid().ToString("N"));
 
-    private void WritePdf(IReadOnlyList<ScannedImage> pages, string target)
+    private ImagePageChoice LastImagePageChoice() => new(
+        Enum.TryParse<ImagePageFormat>(_settings.ImagePageFormat, out var format) ? format : ImagePageFormat.Original,
+        _settings.ImageZoom is >= ImagePageChoice.MinZoom and <= ImagePageChoice.MaxZoom ? _settings.ImageZoom : ImagePageChoice.DefaultZoom);
+
+    private void WritePdf(IReadOnlyList<ScannedImage> pages, string target, PdfPageLayout? layout)
     {
         // Written under a temporary name first, so a half-written file never counts as a document.
         var partial = target + PrintFolders.PartialExtension;
@@ -297,7 +320,7 @@ public sealed class ExtrasViewModel : ObservableObject
         {
             using (var output = new FileStream(partial, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             {
-                _engine.CreateFromImages(pages.Select(p => new PdfImagePage(p.JpegPath, p.Dpi)).ToList(), output);
+                _engine.CreateFromImages(pages.Select(p => new PdfImagePage(p.JpegPath, p.Dpi, layout)).ToList(), output);
             }
             File.Move(partial, target);
         }
@@ -321,6 +344,30 @@ public sealed class ExtrasViewModel : ObservableObject
             _logger.LogDebug(ex, "Scan images could not be removed");
         }
     }
+}
+
+public enum ImagePageFormat
+{
+    Original,
+    A4Portrait,
+    A4Landscape,
+}
+
+/// <summary>How a converted image goes on the page.</summary>
+public sealed record ImagePageChoice(ImagePageFormat Format, int ZoomPercent)
+{
+    public const int MinZoom = 10;
+    public const int MaxZoom = 100;
+
+    /// <summary>A little white margin around the image.</summary>
+    public const int DefaultZoom = 90;
+
+    public PdfPageLayout? ToLayout() => Format switch
+    {
+        ImagePageFormat.A4Portrait => PdfPageLayout.A4(landscape: false, ZoomPercent / 100.0),
+        ImagePageFormat.A4Landscape => PdfPageLayout.A4(landscape: true, ZoomPercent / 100.0),
+        _ => null,
+    };
 }
 
 /// <summary>What the user chose in the scan dialog.</summary>

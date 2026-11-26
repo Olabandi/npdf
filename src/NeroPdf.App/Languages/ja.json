@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Shift",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0} ({1})"
+  "Tooltip.WithShortcut": "{0} ({1})",
+  "ImagePage.Title": "画像を変換",
+  "ImagePage.Format": "ページ",
+  "ImagePage.Original": "元のサイズ",
+  "ImagePage.A4Portrait": "A4 縦",
+  "ImagePage.A4Landscape": "A4 横",
+  "ImagePage.Zoom": "ページ上のサイズ",
+  "ImagePage.Convert": "変換"
 }

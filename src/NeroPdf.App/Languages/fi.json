@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Vaihto",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0} ({1})"
+  "Tooltip.WithShortcut": "{0} ({1})",
+  "ImagePage.Title": "Muunna kuva",
+  "ImagePage.Format": "Sivu",
+  "ImagePage.Original": "Alkuperäinen koko",
+  "ImagePage.A4Portrait": "A4 pysty",
+  "ImagePage.A4Landscape": "A4 vaaka",
+  "ImagePage.Zoom": "Koko sivulla",
+  "ImagePage.Convert": "Muunna"
 }

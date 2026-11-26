@@ -231,6 +231,22 @@
       </Style.Animations>
     </Style>
 
+    <!-- Preview in the "Convert image" dialog. -->
+    <Style Selector="Border.image-preview-area">
+      <Setter Property="Width" Value="{DynamicResource Layout.ImagePreviewAreaSize}" />
+      <Setter Property="Height" Value="{DynamicResource Layout.ImagePreviewAreaSize}" />
+      <Setter Property="Background" Value="{DynamicResource ContentBackground}" />
+      <Setter Property="CornerRadius" Value="{DynamicResource TileCornerRadius}" />
+      <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Border.image-preview-page">
+      <Setter Property="Background" Value="{DynamicResource PageBackground}" />
+      <Setter Property="BoxShadow" Value="{DynamicResource PageBoxShadow}" />
+      <Setter Property="HorizontalAlignment" Value="Center" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="ClipToBounds" Value="True" />
+    </Style>
+
     <!-- Page tools next to the page indicator. -->
     <Style Selector="Button.pill-tool">
       <Setter Property="Background" Value="Transparent" />

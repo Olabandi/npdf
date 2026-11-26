@@ -10,8 +10,25 @@ public interface IPdfEngine
     void CreateFromImages(IReadOnlyList<PdfImagePage> pages, Stream output);
 }
 
-/// <summary>A JPEG image and its resolution, which gives the page size.</summary>
-public sealed record PdfImagePage(string JpegPath, double Dpi);
+/// <summary>
+/// A JPEG image and its resolution. Without <paramref name="Layout"/> the page has the size of the image;
+/// with it, the image is centred on a page of that size.
+/// </summary>
+public sealed record PdfImagePage(string JpegPath, double Dpi, PdfPageLayout? Layout = null);
+
+/// <summary>
+/// A fixed page (e.g. A4) in points; the image is fitted into it, centred, and then scaled by
+/// <paramref name="Zoom"/> (1 = as large as fits, 0.1 = a tenth of that).
+/// </summary>
+public sealed record PdfPageLayout(double Width, double Height, double Zoom)
+{
+    // ISO 216 A4 in points (210 × 297 mm).
+    private const double A4Short = 595.28;
+    private const double A4Long = 841.89;
+
+    public static PdfPageLayout A4(bool landscape, double zoom) =>
+        landscape ? new(A4Long, A4Short, zoom) : new(A4Short, A4Long, zoom);
+}
 
 /// <summary>An opened document. All methods are thread-safe.</summary>
 public interface IPdfDocument : IDisposable

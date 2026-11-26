@@ -138,6 +138,10 @@ public partial class App : Application
         if (printed is not null)
         {
             await viewModel.OpenAsync(printed, printed: true);
+            if (platform.PrintInbox.TakeConversionOrigin(printed) is { } origin)
+            {
+                viewModel.ShowOrigin(origin);
+            }
             return true;
         }
         logger.LogInformation("Started without a document");

@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Shift",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0} ({1})"
+  "Tooltip.WithShortcut": "{0} ({1})",
+  "ImagePage.Title": "แปลงรูปภาพ",
+  "ImagePage.Format": "หน้า",
+  "ImagePage.Original": "ขนาดเดิม",
+  "ImagePage.A4Portrait": "A4 แนวตั้ง",
+  "ImagePage.A4Landscape": "A4 แนวนอน",
+  "ImagePage.Zoom": "ขนาดบนหน้า",
+  "ImagePage.Convert": "แปลง"
 }

@@ -27,6 +27,18 @@ public interface IPrintInbox
     /// document: temporary until the user saves it, then moved.
     /// </summary>
     string CreateDocumentPath(string title);
+
+    /// <summary>
+    /// Notes that a file is being converted through the printer, so the window that receives the
+    /// printout can show where it came from.
+    /// </summary>
+    void RegisterConversion(string originPath);
+
+    /// <summary>
+    /// The file a printout was converted from, if it was registered shortly before and its name matches
+    /// the print job; null otherwise. Each registration is used once.
+    /// </summary>
+    string? TakeConversionOrigin(string printedPath);
 }
 
 /// <summary>Space the operating system needs inside the custom header (window buttons).</summary>
@@ -70,6 +82,9 @@ public static class PrintFolders
 
     /// <summary>Print results that a Nero PDF window has claimed.</summary>
     public const string Opened = "Opened";
+
+    /// <summary>Files being converted through the printer, waiting for their printout.</summary>
+    public const string Conversions = "Conversions";
 
     /// <summary>Extension of files that are still being written.</summary>
     public const string PartialExtension = ".part";

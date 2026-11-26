@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Shift",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0}（{1}）"
+  "Tooltip.WithShortcut": "{0}（{1}）",
+  "ImagePage.Title": "轉換圖片",
+  "ImagePage.Format": "頁面",
+  "ImagePage.Original": "原始大小",
+  "ImagePage.A4Portrait": "A4 直向",
+  "ImagePage.A4Landscape": "A4 橫向",
+  "ImagePage.Zoom": "在頁面上的大小",
+  "ImagePage.Convert": "轉換"
 }

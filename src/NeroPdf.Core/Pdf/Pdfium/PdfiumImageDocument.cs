@@ -27,7 +27,7 @@ internal static class PdfiumImageDocument
             {
                 for (var i = 0; i < pages.Count; i++)
                 {
-                    AddPage(document, i, images[i], pages[i].Dpi);
+                    AddPage(document, i, images[i], pages[i].Dpi, pages[i].Layout);
                 }
                 PdfiumDocument.SaveTo(document, output);
             }
@@ -38,7 +38,7 @@ internal static class PdfiumImageDocument
         }
     }
 
-    private static unsafe void AddPage(IntPtr document, int index, byte[] jpeg, double dpi)
+    private static unsafe void AddPage(IntPtr document, int index, byte[] jpeg, double dpi, PdfPageLayout? layout)
     {
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(dpi, 0);
         var image = PdfiumNative.PageObjNewImageObj(document);
@@ -67,7 +67,17 @@ internal static class PdfiumImageDocument
 
             var width = pixelWidth * PointsPerInch / dpi;
             var height = pixelHeight * PointsPerInch / dpi;
-            var page = PdfiumNative.PageNew(document, index, width, height);
+            var (pageWidth, pageHeight, x, y) = (width, height, 0.0, 0.0);
+            if (layout is not null)
+            {
+                // Fit into the page, apply the zoom, centre.
+                var zoom = Math.Clamp(layout.Zoom, 0.01, 1);
+                var scale = Math.Min(layout.Width / width, layout.Height / height) * zoom;
+                (width, height) = (width * scale, height * scale);
+                (pageWidth, pageHeight) = (layout.Width, layout.Height);
+                (x, y) = ((pageWidth - width) / 2, (pageHeight - height) / 2);
+            }
+            var page = PdfiumNative.PageNew(document, index, pageWidth, pageHeight);
             if (page == IntPtr.Zero)
             {
                 throw new InvalidOperationException("PDFium could not create a page.");
@@ -75,7 +85,7 @@ internal static class PdfiumImageDocument
             try
             {
                 // The image is drawn into the unit square; the matrix scales it to the whole page.
-                PdfiumNative.ImageObjSetMatrix(image, width, 0, 0, height, 0, 0);
+                PdfiumNative.ImageObjSetMatrix(image, width, 0, 0, height, x, y);
                 PdfiumNative.PageInsertObject(page, image);
                 inserted = true;
                 if (PdfiumNative.PageGenerateContent(page) == 0)

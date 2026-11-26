@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Shift",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0} ({1})"
+  "Tooltip.WithShortcut": "{0} ({1})",
+  "ImagePage.Title": "Μετατροπή εικόνας",
+  "ImagePage.Format": "Σελίδα",
+  "ImagePage.Original": "Αρχικό μέγεθος",
+  "ImagePage.A4Portrait": "A4 κατακόρυφα",
+  "ImagePage.A4Landscape": "A4 οριζόντια",
+  "ImagePage.Zoom": "Μέγεθος στη σελίδα",
+  "ImagePage.Convert": "Μετατροπή"
 }

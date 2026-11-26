@@ -39,6 +39,32 @@ public sealed class ScanDocumentTests : IDisposable
         Assert.True(bitmap.Pixels[offset] > bitmap.Pixels[offset + 2] + 40, "Expected the blue bar of the scanned image.");
     }
 
+    [Theory]
+    [InlineData(false, 1.0)]
+    [InlineData(true, 1.0)]
+    [InlineData(false, 0.1)]
+    public void ImagesOnA4AreCentredAndScaled(bool landscape, double zoom)
+    {
+        var path = Path.Combine(_folder, "a4.pdf");
+        using (var output = File.Create(path))
+        {
+            _engine.CreateFromImages([new PdfImagePage(ScanImage, 300, PdfPageLayout.A4(landscape, zoom))], output);
+        }
+        using var document = _engine.Open(path).Document!;
+        AssertSize(landscape ? 841.89 : 595.28, landscape ? 595.28 : 841.89, document.GetPageSize(0));
+
+        // The test image (2:3) is as high as the page at 100 %, a tenth of that at 10 %, always centred:
+        // the corners of the page stay white, and the middle of the blue bar sits on the middle line.
+        var bitmap = document.RenderPage(0, landscape ? 300 : 200, landscape ? 200 : 300);
+        Assert.Equal(255, bitmap.Pixels[0]);
+        var imageHeight = bitmap.Height * zoom;
+        var imageTop = (bitmap.Height - imageHeight) / 2;
+        var barRow = (int)(imageTop + imageHeight * 80 / 450);
+        var middle = bitmap.Width / 2;
+        var offset = barRow * bitmap.Stride + middle * 4;
+        Assert.True(bitmap.Pixels[offset] > bitmap.Pixels[offset + 2] + 40, "Expected the blue bar in the middle of the page.");
+    }
+
     [Fact]
     public void ScannedDocumentStaysLoadableAfterPageOperations()
     {
@@ -85,6 +111,20 @@ public sealed class ScanDocumentTests : IDisposable
         // Never claimed by another window: only completed print jobs in Incoming are.
         File.WriteAllText(path, "x");
         Assert.Null(inbox.TryClaimNext());
+    }
+
+    [Fact]
+    public void ConvertedPrintoutKnowsItsOriginOnce()
+    {
+        var inbox = new FolderPrintInbox(_folder);
+        var origin = Path.Combine(_folder, "Letter.docx");
+        inbox.RegisterConversion(origin);
+        var printed = Path.Combine(_folder, PrintFileName.Create("Microsoft Word - Letter.docx", DateTime.Now, Guid.NewGuid()) + ".pdf");
+        var other = Path.Combine(_folder, PrintFileName.Create("Invoice", DateTime.Now, Guid.NewGuid()) + ".pdf");
+
+        Assert.Null(inbox.TakeConversionOrigin(other));
+        Assert.Equal(origin, inbox.TakeConversionOrigin(printed));
+        Assert.Null(inbox.TakeConversionOrigin(printed));
     }
 
     private static void AssertSize(double width, double height, PdfPageSize size)

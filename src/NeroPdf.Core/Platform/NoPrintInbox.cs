@@ -14,6 +14,12 @@ public sealed class NoPrintInbox : IPrintInbox
     {
     }
 
+    public void RegisterConversion(string originPath)
+    {
+    }
+
+    public string? TakeConversionOrigin(string printedPath) => null;
+
     public string CreateDocumentPath(string title)
     {
         var folder = Path.Combine(Path.GetTempPath(), "NeroPdf");

@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Shift",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0} ({1})"
+  "Tooltip.WithShortcut": "{0} ({1})",
+  "ImagePage.Title": "Kép konvertálása",
+  "ImagePage.Format": "Oldal",
+  "ImagePage.Original": "Eredeti méret",
+  "ImagePage.A4Portrait": "A4 álló",
+  "ImagePage.A4Landscape": "A4 fekvő",
+  "ImagePage.Zoom": "Méret az oldalon",
+  "ImagePage.Convert": "Konvertálás"
 }

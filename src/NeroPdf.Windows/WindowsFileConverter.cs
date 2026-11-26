@@ -48,9 +48,9 @@ internal sealed class WindowsFileConverter : IFileConverter
         {
             try
             {
-                return new ConvertOutcome(ConvertResult.Pages, WiaImages.OnStaThread(() => WiaImages.SaveFramesAsJpeg(path, folder, PageDpi)));
+                return new ConvertOutcome(ConvertResult.Pages, ImagePages.SaveAsJpeg(path, folder, PageDpi));
             }
-            catch (Exception ex) when (ex is COMException or InvalidOperationException or IOException or UnauthorizedAccessException)
+            catch (Exception ex) when (ex is COMException or InvalidOperationException or IOException or UnauthorizedAccessException or InvalidDataException)
             {
                 return new ConvertOutcome(ConvertResult.Failed);
             }

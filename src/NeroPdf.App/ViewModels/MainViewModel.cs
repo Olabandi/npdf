@@ -173,7 +173,10 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     /// <summary>"Save as" is offered for opened files.</summary>
     public bool CanSaveAs => HasPages && !_isPrinted;
 
-    /// <summary>File name shown in the header; only for opened files, not for printed documents.</summary>
+    /// <summary>
+    /// Path shown in the header: the opened file, or the file a converted document was made from.
+    /// Printed and scanned documents show none.
+    /// </summary>
     public string? DocumentName
     {
         get => _documentName;
@@ -247,7 +250,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             if (result.Status != PdfOpenStatus.Ok || result.Document is null)
             {
                 ErrorMessage = Texts.Format(ErrorTextId(result.Status), fileName);
-                DocumentName = printed ? null : fileName;
+                DocumentName = printed ? null : path;
                 State = ViewState.Error;
                 _logger.LogInformation("Document not shown: {Status}", result.Status);
                 return;
@@ -257,7 +260,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
             _sourcePath = path;
             _isPrinted = printed;
             _hasChanges = false;
-            DocumentName = printed ? null : fileName;
+            DocumentName = printed ? null : path;
             Overview.Load(_document);
             State = ViewState.Showing;
             _logger.LogInformation("Document ready: {Pages} pages in {Ms} ms", Overview.Pages.Count, watch.ElapsedMilliseconds);
@@ -269,7 +272,17 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     /// Creates a new document (a scan) after confirming unsaved changes and shows it like a printed one:
     /// temporary until saved. <paramref name="create"/> returns the file, or null if nothing was created.
     /// </summary>
-    public async Task CreateDocumentAsync(string progressText, Func<Task<string?>> create, bool scanning = false)
+    /// <summary>A printout that was converted from a file: the header shows that file.</summary>
+    public void ShowOrigin(string originPath)
+    {
+        if (HasPages)
+        {
+            DocumentName = originPath;
+        }
+    }
+
+    /// <param name="origin">The file the document was made from (converting); shown in the header.</param>
+    public async Task CreateDocumentAsync(string progressText, Func<Task<string?>> create, bool scanning = false, string? origin = null)
     {
         if (!await ConfirmCloseAsync())
         {
@@ -296,6 +309,10 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         if (path is not null)
         {
             await OpenAsync(path, printed: true);
+            if (origin is not null && HasPages)
+            {
+                DocumentName = origin;
+            }
         }
     }
 
@@ -311,7 +328,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         }
         var choice = _isPrinted
             ? await Dialogs.AskUnsavedPrintAsync()
-            : await Dialogs.AskUnsavedChangesAsync(DocumentName ?? string.Empty);
+            : await Dialogs.AskUnsavedChangesAsync(Path.GetFileName(DocumentName) ?? string.Empty);
         return choice switch
         {
             UnsavedChoice.Save => await SaveAsync(),
@@ -399,7 +416,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _sourcePath = target;
         _isPrinted = false;
         _hasChanges = false;
-        DocumentName = Path.GetFileName(target);
+        DocumentName = target;
         OnDocumentStateChanged();
         return true;
     }

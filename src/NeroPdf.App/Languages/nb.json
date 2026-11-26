@@ -92,5 +92,12 @@
   "Key.Control": "Ctrl",
   "Key.Shift": "Skift",
   "Key.Command": "Cmd",
-  "Tooltip.WithShortcut": "{0} ({1})"
+  "Tooltip.WithShortcut": "{0} ({1})",
+  "ImagePage.Title": "Konverter bilde",
+  "ImagePage.Format": "Side",
+  "ImagePage.Original": "Originalstørrelse",
+  "ImagePage.A4Portrait": "A4 stående",
+  "ImagePage.A4Landscape": "A4 liggende",
+  "ImagePage.Zoom": "Størrelse på siden",
+  "ImagePage.Convert": "Konverter"
 }
