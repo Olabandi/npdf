@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 纵向",
   "ImagePage.A4Landscape": "A4 横向",
   "ImagePage.Zoom": "在页面上的大小",
-  "ImagePage.Convert": "转换"
+  "ImagePage.Convert": "转换",
+  "Header.Print": "打印",
+  "Print.Progress": "正在打印第 {0} 页，共 {1} 页…",
+  "Print.Failed.Title": "打印失败",
+  "Print.Failed.Text": "无法打印文档。请检查打印机，然后重试。"
 }

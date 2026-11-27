@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 portrait",
   "ImagePage.A4Landscape": "A4 paysage",
   "ImagePage.Zoom": "Taille sur la page",
-  "ImagePage.Convert": "Convertir"
+  "ImagePage.Convert": "Convertir",
+  "Header.Print": "Imprimer",
+  "Print.Progress": "Impression de la page {0} sur {1}…",
+  "Print.Failed.Title": "Échec de l’impression",
+  "Print.Failed.Text": "Impossible d’imprimer le document. Vérifiez l’imprimante, puis réessayez."
 }

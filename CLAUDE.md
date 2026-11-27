@@ -6,7 +6,7 @@ Maßgebliche Quelle ist das Konzept „Nero PDF – Konzept und Entwicklungsleit
 
 ## Produkt in einem Satz
 
-Nero PDF ist ein schlanker PDF-Viewer und virtueller Drucker für Windows und macOS mit genau diesen Funktionen: Anzeigen, Seitenübersicht, Umsortieren, Drehen, Löschen, Speichern (inkl. passwortgeschützter PDFs), dazu zwei feste Hinweis-Kacheln auf Nero AI und Nero Platinum unten in der Seitenübersicht (URLs in JSON, Öffnen im Standardbrowser). Zusätzlich, nur freigeschaltet bei installiertem Nero Start/Nero Platinum (Stefan, 26.11.2026): „Scannen …“ (direkt als PDF) und „Konvertieren …“ (druckbare Dateien über den Drucker Nero PDF als PDF). Ohne Nero-Installation sind beide Knöpfe von „Get Nero Platinum to unlock“ überdeckt.
+Nero PDF ist ein schlanker PDF-Viewer und virtueller Drucker für Windows und macOS mit genau diesen Funktionen: Anzeigen, Seitenübersicht, Umsortieren, Drehen, Löschen, Speichern (inkl. passwortgeschützter PDFs), Drucken auf einen echten Drucker (Stefan, 27.11.2026), dazu zwei feste Hinweis-Kacheln auf Nero AI und Nero Platinum unten in der Seitenübersicht (URLs in JSON, Öffnen im Standardbrowser). Zusätzlich, nur freigeschaltet bei installiertem Nero Start/Nero Platinum (Stefan, 26.11.2026): „Scannen …“ (direkt als PDF) und „Konvertieren …“ (druckbare Dateien über den Drucker Nero PDF als PDF). Ohne Nero-Installation sind beide Knöpfe von „Get Nero Platinum to unlock“ überdeckt.
 
 ## Umfang und Feature-Creep-Schutz
 

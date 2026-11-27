@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 álló",
   "ImagePage.A4Landscape": "A4 fekvő",
   "ImagePage.Zoom": "Méret az oldalon",
-  "ImagePage.Convert": "Konvertálás"
+  "ImagePage.Convert": "Konvertálás",
+  "Header.Print": "Nyomtatás",
+  "Print.Progress": "{0}/{1}. oldal nyomtatása …",
+  "Print.Failed.Title": "A nyomtatás nem sikerült",
+  "Print.Failed.Text": "A dokumentumot nem sikerült kinyomtatni. Ellenőrizze a nyomtatót, majd próbálja újra."
 }

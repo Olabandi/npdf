@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 直向",
   "ImagePage.A4Landscape": "A4 橫向",
   "ImagePage.Zoom": "在頁面上的大小",
-  "ImagePage.Convert": "轉換"
+  "ImagePage.Convert": "轉換",
+  "Header.Print": "列印",
+  "Print.Progress": "正在列印第 {0} 頁，共 {1} 頁…",
+  "Print.Failed.Title": "列印失敗",
+  "Print.Failed.Text": "無法列印文件。請檢查印表機，然後再試一次。"
 }

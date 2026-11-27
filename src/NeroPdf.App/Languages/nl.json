@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 staand",
   "ImagePage.A4Landscape": "A4 liggend",
   "ImagePage.Zoom": "Grootte op de pagina",
-  "ImagePage.Convert": "Converteren"
+  "ImagePage.Convert": "Converteren",
+  "Header.Print": "Afdrukken",
+  "Print.Progress": "Pagina {0} van {1} wordt afgedrukt …",
+  "Print.Failed.Title": "Afdrukken mislukt",
+  "Print.Failed.Text": "Het document kon niet worden afgedrukt. Controleer de printer en probeer het opnieuw."
 }

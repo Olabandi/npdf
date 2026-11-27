@@ -72,7 +72,8 @@ public sealed class UnsupportedDefaultPdfApp : IDefaultPdfApp
 
 /// <summary>Everything the shared app needs from the platform project.</summary>
 public sealed record PlatformServices(IPlatformPaths Paths, IPrintInbox PrintInbox, HeaderInsets HeaderInsets,
-    IDefaultPdfApp DefaultPdfApp, INeroSuite NeroSuite, IFileConverter Converter, IScanner Scanner);
+    IDefaultPdfApp DefaultPdfApp, INeroSuite NeroSuite, IFileConverter Converter, IScanner Scanner,
+    IDocumentPrinter Printer);
 
 /// <summary>Sub folders of the temp folder used between the virtual printer and the app.</summary>
 public static class PrintFolders

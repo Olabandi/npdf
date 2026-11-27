@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 pionowo",
   "ImagePage.A4Landscape": "A4 poziomo",
   "ImagePage.Zoom": "Rozmiar na stronie",
-  "ImagePage.Convert": "Konwertuj"
+  "ImagePage.Convert": "Konwertuj",
+  "Header.Print": "Drukuj",
+  "Print.Progress": "Drukowanie strony {0} z {1} …",
+  "Print.Failed.Title": "Drukowanie nie powiodło się",
+  "Print.Failed.Text": "Nie można wydrukować dokumentu. Sprawdź drukarkę i spróbuj ponownie."
 }

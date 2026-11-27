@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 세로",
   "ImagePage.A4Landscape": "A4 가로",
   "ImagePage.Zoom": "페이지에서의 크기",
-  "ImagePage.Convert": "변환"
+  "ImagePage.Convert": "변환",
+  "Header.Print": "인쇄",
+  "Print.Progress": "{1}페이지 중 {0}페이지 인쇄 중…",
+  "Print.Failed.Title": "인쇄하지 못했습니다",
+  "Print.Failed.Text": "문서를 인쇄할 수 없습니다. 프린터를 확인한 후 다시 시도하세요."
 }

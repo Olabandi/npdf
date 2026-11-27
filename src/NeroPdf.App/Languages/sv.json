@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 stående",
   "ImagePage.A4Landscape": "A4 liggande",
   "ImagePage.Zoom": "Storlek på sidan",
-  "ImagePage.Convert": "Konvertera"
+  "ImagePage.Convert": "Konvertera",
+  "Header.Print": "Skriv ut",
+  "Print.Progress": "Skriver ut sida {0} av {1} …",
+  "Print.Failed.Title": "Utskriften misslyckades",
+  "Print.Failed.Text": "Dokumentet kunde inte skrivas ut. Kontrollera skrivaren och försök igen."
 }

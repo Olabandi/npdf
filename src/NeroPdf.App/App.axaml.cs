@@ -85,6 +85,7 @@ public partial class App : Application
             platform.PrintInbox, engine, settings, () => settingsStore.Save(settings), promoLinks.OpenNeroPlatinumCommand,
             loggers.CreateLogger<ExtrasViewModel>());
         viewModel.Extras = extras;
+        viewModel.Printing = new PrintViewModel(viewModel, platform.Printer, loggers.CreateLogger<PrintViewModel>());
 
         var window = new MainWindow { DataContext = viewModel, SidebarSizer = sidebarSizer };
         promoLinks.Launcher = uri => window.Launcher.LaunchUriAsync(uri);

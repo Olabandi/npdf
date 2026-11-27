@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 κατακόρυφα",
   "ImagePage.A4Landscape": "A4 οριζόντια",
   "ImagePage.Zoom": "Μέγεθος στη σελίδα",
-  "ImagePage.Convert": "Μετατροπή"
+  "ImagePage.Convert": "Μετατροπή",
+  "Header.Print": "Εκτύπωση",
+  "Print.Progress": "Εκτύπωση σελίδας {0} από {1} …",
+  "Print.Failed.Title": "Η εκτύπωση απέτυχε",
+  "Print.Failed.Text": "Δεν ήταν δυνατή η εκτύπωση του εγγράφου. Ελέγξτε τον εκτυπωτή και δοκιμάστε ξανά."
 }

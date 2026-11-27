@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 portrait",
   "ImagePage.A4Landscape": "A4 landscape",
   "ImagePage.Zoom": "Size on the page",
-  "ImagePage.Convert": "Convert"
+  "ImagePage.Convert": "Convert",
+  "Header.Print": "Print",
+  "Print.Progress": "Printing page {0} of {1} …",
+  "Print.Failed.Title": "Printing failed",
+  "Print.Failed.Text": "The document could not be printed. Check the printer and try again."
 }

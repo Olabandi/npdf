@@ -72,6 +72,12 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     /// <summary>Tiles linking to other Nero products.</summary>
     public PromoLinksViewModel? PromoLinks { get; set; }
 
+    /// <summary>Printing the document shown.</summary>
+    public PrintViewModel? Printing { get; set; }
+
+    /// <summary>The document shown, for printing; null while none is open.</summary>
+    internal Core.Pdf.IPdfDocument? Document => _document;
+
     /// <summary>Scanning and converting (unlocked with Nero Platinum).</summary>
     public ExtrasViewModel? Extras { get; set; }
 

@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 hoch",
   "ImagePage.A4Landscape": "A4 quer",
   "ImagePage.Zoom": "Größe auf der Seite",
-  "ImagePage.Convert": "Konvertieren"
+  "ImagePage.Convert": "Konvertieren",
+  "Header.Print": "Drucken",
+  "Print.Progress": "Seite {0} von {1} wird gedruckt …",
+  "Print.Failed.Title": "Drucken fehlgeschlagen",
+  "Print.Failed.Text": "Das Dokument konnte nicht gedruckt werden. Drucker prüfen und erneut versuchen."
 }

@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 แนวตั้ง",
   "ImagePage.A4Landscape": "A4 แนวนอน",
   "ImagePage.Zoom": "ขนาดบนหน้า",
-  "ImagePage.Convert": "แปลง"
+  "ImagePage.Convert": "แปลง",
+  "Header.Print": "พิมพ์",
+  "Print.Progress": "กำลังพิมพ์หน้า {0} จาก {1}…",
+  "Print.Failed.Title": "การพิมพ์ล้มเหลว",
+  "Print.Failed.Text": "ไม่สามารถพิมพ์เอกสารได้ ตรวจสอบเครื่องพิมพ์แล้วลองอีกครั้ง"
 }

@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 na výšku",
   "ImagePage.A4Landscape": "A4 na šířku",
   "ImagePage.Zoom": "Velikost na stránce",
-  "ImagePage.Convert": "Převést"
+  "ImagePage.Convert": "Převést",
+  "Header.Print": "Tisk",
+  "Print.Progress": "Tiskne se stránka {0} z {1} …",
+  "Print.Failed.Title": "Tisk se nezdařil",
+  "Print.Failed.Text": "Dokument nelze vytisknout. Zkontrolujte tiskárnu a zkuste to znovu."
 }

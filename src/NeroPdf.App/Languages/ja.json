@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 縦",
   "ImagePage.A4Landscape": "A4 横",
   "ImagePage.Zoom": "ページ上のサイズ",
-  "ImagePage.Convert": "変換"
+  "ImagePage.Convert": "変換",
+  "Header.Print": "印刷",
+  "Print.Progress": "{1} ページ中 {0} ページを印刷しています…",
+  "Print.Failed.Title": "印刷に失敗しました",
+  "Print.Failed.Text": "ドキュメントを印刷できませんでした。プリンターを確認して、もう一度お試しください。"
 }

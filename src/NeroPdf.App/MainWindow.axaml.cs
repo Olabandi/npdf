@@ -84,6 +84,11 @@ public partial class MainWindow : Window
         ToolTip.SetTip(OpenButton, WithShortcut("Header.Open.Tip", Key.O, command));
         ToolTip.SetTip(SaveAsButton, WithShortcut("Header.SaveAs", Key.S, command | KeyModifiers.Shift));
         ToolTip.SetTip(SaveButton, WithShortcut("Header.Save", Key.S, command));
+        ToolTip.SetTip(PrintButton, WithShortcut("Header.Print", Key.P, command));
+        if (viewModel.Printing is { } printing)
+        {
+            KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.P, command), Command = printing.PrintCommand });
+        }
     }
 
     private static string WithShortcut(string textId, Key key, KeyModifiers modifiers)

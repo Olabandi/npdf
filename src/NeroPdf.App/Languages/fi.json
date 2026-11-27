@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 pysty",
   "ImagePage.A4Landscape": "A4 vaaka",
   "ImagePage.Zoom": "Koko sivulla",
-  "ImagePage.Convert": "Muunna"
+  "ImagePage.Convert": "Muunna",
+  "Header.Print": "Tulosta",
+  "Print.Progress": "Tulostetaan sivua {0}/{1} …",
+  "Print.Failed.Title": "Tulostus epäonnistui",
+  "Print.Failed.Text": "Asiakirjaa ei voitu tulostaa. Tarkista tulostin ja yritä uudelleen."
 }

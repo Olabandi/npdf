@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 книжная",
   "ImagePage.A4Landscape": "A4 альбомная",
   "ImagePage.Zoom": "Размер на странице",
-  "ImagePage.Convert": "Преобразовать"
+  "ImagePage.Convert": "Преобразовать",
+  "Header.Print": "Печать",
+  "Print.Progress": "Печать страницы {0} из {1} …",
+  "Print.Failed.Title": "Не удалось напечатать",
+  "Print.Failed.Text": "Не удалось напечатать документ. Проверьте принтер и повторите попытку."
 }

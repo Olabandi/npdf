@@ -19,7 +19,7 @@ internal static class MacPlatform
         // Scanning and converting are Windows only for now (macOS: ImageCaptureCore, follows with the Mac build).
         var extras = new UnsupportedExtras();
         return new PlatformServices(new MacPaths(data), new NoPrintInbox(), new HeaderInsets(WindowButtonsWidth, 0),
-            new UnsupportedDefaultPdfApp(), extras, extras, extras);
+            new UnsupportedDefaultPdfApp(), extras, extras, extras, new UnsupportedDocumentPrinter());
     }
 
     private sealed record MacPaths(string DataDirectory) : IPlatformPaths;

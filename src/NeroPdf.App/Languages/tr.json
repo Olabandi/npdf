@@ -99,5 +99,9 @@
   "ImagePage.A4Portrait": "A4 dikey",
   "ImagePage.A4Landscape": "A4 yatay",
   "ImagePage.Zoom": "Sayfadaki boyut",
-  "ImagePage.Convert": "Dönüştür"
+  "ImagePage.Convert": "Dönüştür",
+  "Header.Print": "Yazdır",
+  "Print.Progress": "Sayfa {0}/{1} yazdırılıyor …",
+  "Print.Failed.Title": "Yazdırma başarısız oldu",
+  "Print.Failed.Text": "Belge yazdırılamadı. Yazıcıyı kontrol edip yeniden deneyin."
 }

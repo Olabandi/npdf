@@ -29,6 +29,9 @@ public interface IDialogs
 
     Task<string?> PickSaveTargetAsync(string suggestedName, string? folder);
 
+    /// <summary>Native handle of the window, owner of system dialogs such as the print dialog.</summary>
+    nint WindowHandle { get; }
+
     /// <summary>A message with an OK button.</summary>
     Task ShowMessageAsync(string title, string text);
 
@@ -112,6 +115,8 @@ public sealed class Dialogs(Window owner) : IDialogs
             Ok);
         await dialog.ShowDialog<string?>(owner);
     }
+
+    public nint WindowHandle => owner.TryGetPlatformHandle()?.Handle ?? 0;
 
     public async Task ShowMessageAsync(string title, string text)
     {
